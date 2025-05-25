@@ -12,21 +12,41 @@
 class Parser {
 public:
     using expression = std::unique_ptr<ExpressionAST>;
-    Parser(std::vector<Token> tokens)
+    using statement = std::unique_ptr<StatementAST>;
+    Parser(std::vector<Token> tokens, VariablesTable& table)
     : tokens_(std::move(tokens))
-    , position_(0) {}
+    , position_(0)
+    , variables_table_(table) {}
 
-    std::vector<expression> parse() {
-        std::vector<expression> result;
+    std::vector<statement> parse() {
+        std::vector<statement> result;
         while (!Match(TokenType::kEOF)) {
-            result.push_back(ParseExpression());
+            result.push_back(ParseStatement());
         }
         return result;
     }
 private:
+
+    statement ParseStatement() {
+        return ParseAssignStatement();
+    }
+
+    statement ParseAssignStatement() {
+        if (get().type() == TokenType::kIdentifier && get(1).type() == TokenType::kAssign) {
+            Token current = get();
+            Match(TokenType::kIdentifier);
+            if (!Match(TokenType::kAssign)) throw std::runtime_error("not now");
+            return std::make_unique<AssignStatementAST>(
+                current.text(), ParseExpression(), variables_table_
+            );
+        }
+        throw std::runtime_error("not now");
+    }
+
     expression ParseExpression() {
         return ParseAdd();
     }
+
     expression ParseAdd() {
         expression expr = ParseMult();
         while (true) {
@@ -64,7 +84,14 @@ private:
     }
 
     expression ParseUnary() {
-        return ParseLiteral();
+        if (Match(TokenType::kMinus)) {
+            return std::make_unique<UnaryExpressionAST>(
+                OperationType::kMinusOp, ParseLiteral()
+            );
+        }
+        return std::make_unique<UnaryExpressionAST>(
+            OperationType::kPlusOp, ParseLiteral()
+        );
     }
 
     expression ParseLiteral() {
@@ -74,6 +101,19 @@ private:
                 std::stod(token.text())
             );
         }
+        if (Match(TokenType::kIdentifier)) {
+            return std::make_unique<VariableExpression>(
+                token.text(), variables_table_
+            );
+        }
+        if (Match(TokenType::kLParenthesis)) {
+            auto expr = ParseExpression();
+            if (!Match(TokenType::kRParenthesis)) {
+                throw std::runtime_error("not closed parenthesis!");
+            }
+            return expr;
+        }
+        throw std::runtime_error("bye");
     }
 
     bool Match(TokenType type) {
@@ -85,13 +125,14 @@ private:
         return false;
     }
 
-    Token get() {
-        if (position_ > tokens_.size()) {
+    Token get(size_t additional = 0) {
+        if (position_ + additional > tokens_.size()) {
             return Token(TokenType::kEOF, "");
         }
-        return tokens_[position_];
+        return tokens_[position_ + additional];
     }
 
     size_t position_;
     std::vector<Token> tokens_;
+    VariablesTable& variables_table_;
 };

@@ -21,6 +21,7 @@ public:
             char current = char_source_.peek();
             if (IsDigit(current)) TokenizeNumber();
             else if (IsOperator(current)) TokenizeOperator();
+            else if (IsLetterOrLowLine(current)) TokenizeIdetifier();
             else char_source_.get(); // skip
         }
         AddToken(TokenType::kEOF);
@@ -47,6 +48,20 @@ private:
         AddToken(kOperatorTable.at(std::string{current}));
     }
 
+    void TokenizeIdetifier() {
+        std::string name;
+        while (true) {
+            char current = char_source_.peek();
+            if (!(IsDigit(current) || IsLetterOrLowLine(current))) {
+                break;
+            }
+            name.push_back(current);
+            char_source_.get();
+        }
+        // TODO: keywords here
+        AddToken(TokenType::kIdentifier, name);
+    }
+
     void AddToken(TokenType type) {
         AddToken(type, "");
     }
@@ -55,12 +70,20 @@ private:
         tokens.emplace_back(type, text);
     }
 
-    bool IsDigit(char current) {
+    static bool IsDigit(char current) {
         return std::isdigit(current);
     }
 
-    bool IsOperator(char current) {
+    static bool IsOperator(char current) {
         return kOperatorTable.contains(std::string{current});
+    }
+
+    static bool IsLetterOrLowLine(char current) {
+        return (
+            ('a' <= current && current <= 'z') ||
+            ('A' <= current && current <= 'Z') ||
+            (current == '_')
+        );
     }
 
     std::istream& char_source_;
@@ -70,5 +93,8 @@ private:
         {"-", TokenType::kMinus},
         {"*", TokenType::kMul},
         {"/", TokenType::kDiv},
+        {"=", TokenType::kAssign},
+        {"(", TokenType::kLParenthesis},
+        {")", TokenType::kRParenthesis},
     };
 };
