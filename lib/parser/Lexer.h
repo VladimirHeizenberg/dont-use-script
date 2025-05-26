@@ -19,7 +19,7 @@ public:
     std::vector<Token> tokenize() {
         while(!char_source_.eof()) {
             char current = char_source_.peek();
-            if (IsDigit(current)) TokenizeNumber();
+            if (IsDigit(current) || current == '.') TokenizeNumber();
             else if (IsOperator(current)) TokenizeOperator();
             else if (IsLetterOrLowLine(current)) TokenizeIdetifier();
             else char_source_.get(); // skip
@@ -32,9 +32,28 @@ public:
 private:
     void TokenizeNumber() {
         std::string number;
+        bool point = false, exponent = false;
         while (true) {
             char current = char_source_.peek();
-            if (!IsDigit(current)) {
+            if (current == '.') {
+                if (!point) {
+                    point = true;
+                } else {
+                    throw std::runtime_error("Wrong number format");
+                }
+            }
+            else if (current == 'e' || current == 'E') {
+                if (!exponent) {
+                    exponent= true;
+                } else {
+                    throw std::runtime_error("Wrong number format");
+                }
+            }
+            else if (
+                (current == '-' || current == '+') && 
+                (*number.rbegin() == 'e' || *number.rbegin() == 'E')
+                ) {}
+            else if (!IsDigit(current)) {
                 break;
             }
             number.push_back(current);
@@ -58,7 +77,6 @@ private:
             name.push_back(current);
             char_source_.get();
         }
-        // TODO: keywords here
         if (kKeywordsTable.contains(name)) {
             return AddToken(kKeywordsTable.at(name));
         }

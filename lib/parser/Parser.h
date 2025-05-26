@@ -11,12 +11,14 @@
 
 class Parser {
 public:
-    using expression = std::unique_ptr<ExpressionAST>;
-    using statement = std::unique_ptr<StatementAST>;
-    Parser(std::vector<Token> tokens, VariablesTable& table)
+    using expression    = std::unique_ptr<ExpressionAST>;
+    using statement     = std::unique_ptr<StatementAST>;
+
+    Parser(std::vector<Token> tokens, VariablesTable& table, std::ostream& out)
     : tokens_(std::move(tokens))
     , position_(0)
-    , variables_table_(table) {}
+    , variables_table_(table)
+    , out_(out) {}
 
     std::vector<statement> parse() {
         std::vector<statement> result;
@@ -29,20 +31,20 @@ private:
 
     statement ParseStatement() {
         if (Match(TokenType::kPrint)) {
-            Match(TokenType::kLParenthesis);
+            Check(TokenType::kLParenthesis);
             statement print = std::make_unique<PrintStatement>(
-                ParseExpression()
+                ParseExpression(), out_
             );
-            if (!Match(TokenType::kRParenthesis)) throw std::runtime_error("not closed parenthesis!");
+            Check(TokenType::kRParenthesis);
             return print;
         }
         if (Match(TokenType::kPrintln)) {
-            Match(TokenType::kLParenthesis);
-            statement print = std::make_unique<PrintlnStatement>(
-                ParseExpression()
+            Check(TokenType::kLParenthesis);
+            statement println = std::make_unique<PrintlnStatement>(
+                ParseExpression(), out_
             );
-            if (!Match(TokenType::kRParenthesis)) throw std::runtime_error("not closed parenthesis!");
-            return print;
+            Check(TokenType::kRParenthesis);
+            return println;
         }
         return ParseAssignStatement();
     }
@@ -51,7 +53,7 @@ private:
         if (get().type() == TokenType::kIdentifier && get(1).type() == TokenType::kAssign) {
             Token current = get();
             Match(TokenType::kIdentifier);
-            if (!Match(TokenType::kAssign)) throw std::runtime_error("not now");
+            Check(TokenType::kAssign);
             return std::make_unique<AssignStatementAST>(
                 current.text(), ParseExpression(), variables_table_
             );
@@ -124,9 +126,7 @@ private:
         }
         if (Match(TokenType::kLParenthesis)) {
             auto expr = ParseExpression();
-            if (!Match(TokenType::kRParenthesis)) {
-                throw std::runtime_error("not closed parenthesis!");
-            }
+            Check(TokenType::kRParenthesis);
             return expr;
         }
         throw std::runtime_error("bye");
@@ -141,6 +141,12 @@ private:
         return false;
     }
 
+    void Check(TokenType type) {
+        if (!Match(type)) {
+            throw std::runtime_error("invalid syntax");
+        }
+    }
+
     Token get(size_t additional = 0) {
         if (position_ + additional > tokens_.size()) {
             return Token(TokenType::kEOF, "");
@@ -151,4 +157,5 @@ private:
     size_t position_;
     std::vector<Token> tokens_;
     VariablesTable& variables_table_;
+    std::ostream& out_;
 };
