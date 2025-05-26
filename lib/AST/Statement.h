@@ -3,4 +3,5 @@
 class StatementAST {
 public:
     virtual void execute() = 0;
+    virtual ~StatementAST() = default;
 };

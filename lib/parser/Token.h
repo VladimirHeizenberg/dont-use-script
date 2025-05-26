@@ -2,13 +2,18 @@
 
 #include <string>
 
-enum TokenType {
+enum class TokenType {
     kIdentifier,
 
     kNumber,
 
-    kAssign, // =
+    // keywords
+    kPrint,
+    kPrintln,
 
+
+    // operators
+    kAssign, // =
     kPlus, // +
     kMinus, // -
     kMul, // *
@@ -22,16 +27,18 @@ enum TokenType {
 
 std::ostream& operator<<(std::ostream& os, TokenType type) {
     switch (type) {
-        case kIdentifier:     return os << "kIdentifier";
-        case kNumber:         return os << "kNumber";
-        case kAssign:         return os << "kAssign";
-        case kPlus:           return os << "kPlus";
-        case kMinus:          return os << "kMinus";
-        case kMul:            return os << "kMul";
-        case kDiv:            return os << "kDiv";
-        case kLParenthesis:   return os << "kLParenthesis";
-        case kRParenthesis:   return os << "kRParenthesis";
-        case kEOF:            return os << "kEOF";
+        case TokenType::kIdentifier:     return os << "kIdentifier";
+        case TokenType::kNumber:         return os << "kNumber";
+        case TokenType::kPrint:          return os << "kPrint";
+        case TokenType::kPrintln:        return os << "kPrintln";
+        case TokenType::kAssign:         return os << "kAssign";
+        case TokenType::kPlus:           return os << "kPlus";
+        case TokenType::kMinus:          return os << "kMinus";
+        case TokenType::kMul:            return os << "kMul";
+        case TokenType::kDiv:            return os << "kDiv";
+        case TokenType::kLParenthesis:   return os << "kLParenthesis";
+        case TokenType::kRParenthesis:   return os << "kRParenthesis";
+        case TokenType::kEOF:            return os << "kEOF";
         default:              return os << "Unknown TokenType";
     }
 }

@@ -13,6 +13,10 @@ public:
     double Get(const std::string& name) {
         return variables.at(name);
     }
+
+    bool Contains(const std::string& name) {
+        return variables.contains(name);
+    }
 private:
     std::unordered_map<std::string, double> variables;
 };

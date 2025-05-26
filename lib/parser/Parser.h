@@ -28,6 +28,22 @@ public:
 private:
 
     statement ParseStatement() {
+        if (Match(TokenType::kPrint)) {
+            Match(TokenType::kLParenthesis);
+            statement print = std::make_unique<PrintStatement>(
+                ParseExpression()
+            );
+            if (!Match(TokenType::kRParenthesis)) throw std::runtime_error("not closed parenthesis!");
+            return print;
+        }
+        if (Match(TokenType::kPrintln)) {
+            Match(TokenType::kLParenthesis);
+            statement print = std::make_unique<PrintlnStatement>(
+                ParseExpression()
+            );
+            if (!Match(TokenType::kRParenthesis)) throw std::runtime_error("not closed parenthesis!");
+            return print;
+        }
         return ParseAssignStatement();
     }
 

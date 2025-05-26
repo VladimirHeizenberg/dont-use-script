@@ -59,6 +59,9 @@ private:
             char_source_.get();
         }
         // TODO: keywords here
+        if (kKeywordsTable.contains(name)) {
+            return AddToken(kKeywordsTable.at(name));
+        }
         AddToken(TokenType::kIdentifier, name);
     }
 
@@ -96,5 +99,11 @@ private:
         {"=", TokenType::kAssign},
         {"(", TokenType::kLParenthesis},
         {")", TokenType::kRParenthesis},
+    };
+
+    inline static const std::unordered_map<std::string, TokenType> kKeywordsTable = {
+        {"print", TokenType::kPrint},
+        {"println", TokenType::kPrintln},
+
     };
 };

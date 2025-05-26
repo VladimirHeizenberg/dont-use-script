@@ -6,5 +6,6 @@
 
 
 #include "AssignStatement.h"
+#include "PrintStatement.h"
 
 #include "VariablesTable.h"
