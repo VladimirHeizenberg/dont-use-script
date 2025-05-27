@@ -14,6 +14,8 @@ int main(int argc, char** argv) {
         println(d)
         println(c)
         print(e)
+        k = false
+        print(k)
     )";
     std::stringstream ss(code);
     Lexer lexer(ss);

@@ -113,19 +113,19 @@ private:
             );
         }
         return std::make_unique<UnaryExpressionAST>(
-            OperationType::kPlusOp, ParseLiteral()
+            OperationType::kNoOp, ParseLiteral()
         );
     }
 
     expression ParseLiteral() {
         auto token = get();
+        // TODO: replace with the map
         if (Match(TokenType::kNumber)) {
             return std::make_unique<ConstExpressionAST>(
                 std::stod(token.text())
             );
         }
         if (Match(TokenType::kTrue)) {
-            std::cout << "parsing true!\n";
             return std::make_unique<ConstExpressionAST>(
                 Value(true)
             );

@@ -69,6 +69,7 @@ private:
 
     void TokenizeOperator() {
         char current = char_source_.get();
+        if ()
         AddToken(kOperatorTable.at(std::string{current}));
     }
 
@@ -129,5 +130,8 @@ private:
         {"println", TokenType::kPrintln},
         {"true", TokenType::kTrue},
         {"false", TokenType::kFalse},
+        {"if", TokenType::kIf},
+        {"then", TokenType::kThen},
+        {"else", TokenType::kElse},
     };
 };

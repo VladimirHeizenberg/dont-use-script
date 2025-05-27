@@ -12,6 +12,9 @@ enum class TokenType {
     kPrintln,
     kTrue,
     kFalse,
+    kIf,
+    kThen,
+    kElse,
 
 
     // operators
