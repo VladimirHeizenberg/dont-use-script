@@ -127,6 +127,7 @@ private:
     inline static const std::unordered_map<std::string, TokenType> kKeywordsTable = {
         {"print", TokenType::kPrint},
         {"println", TokenType::kPrintln},
-
+        {"true", TokenType::kTrue},
+        {"false", TokenType::kFalse},
     };
 };

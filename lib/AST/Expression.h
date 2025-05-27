@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Value.h"
+
 class ExpressionAST {
 public:
-    virtual double evaluate() = 0;
+    virtual Value evaluate() = 0;
     virtual ~ExpressionAST() = default;
 };

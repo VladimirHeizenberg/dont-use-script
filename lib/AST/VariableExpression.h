@@ -5,6 +5,7 @@
 
 #include "Expression.h"
 #include "VariablesTable.h"
+#include "Value.h"
 
 class VariableExpression: public ExpressionAST {
 public:
@@ -12,7 +13,7 @@ public:
     : name_(name)
     , table_(table) {}
 
-    double evaluate() override {
+    Value evaluate() override {
         if (!table_.Contains(name_)) throw std::runtime_error("Name '" + name_ + "' is not defined\n");
         return table_.Get(name_);
     }

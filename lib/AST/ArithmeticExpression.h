@@ -13,14 +13,14 @@ enum OperationType {
 
 class ConstExpressionAST : public ExpressionAST {
 public:
-    ConstExpressionAST(double value)
+    ConstExpressionAST(const Value& value)
     : value_(value) {}
 
-    double evaluate() override {
+    Value evaluate() override {
         return value_;
     }
 private:
-    double value_;
+    Value value_;
 };
 
 class UnaryExpressionAST : public ExpressionAST {
@@ -30,10 +30,17 @@ public:
     : operation_(operation)
     , expr_(std::move(expr)) {}
 
-    double evaluate() override {
+    Value evaluate() override {
+        Value result = expr_->evaluate();
         switch (operation_) {
-        case OperationType::kPlusOp: return expr_->evaluate();
-        case OperationType::kMinusOp: return (-expr_->evaluate());
+        case OperationType::kPlusOp: 
+            if (result.Is<double>())
+                return result;
+            throw std::runtime_error("Wrong type for unary expression +\n");
+        case OperationType::kMinusOp: 
+            if (result.Is<double>()) {
+                return -result.As<double>();
+            }
         }
         throw std::runtime_error("Wrong unary operator");
     }
@@ -51,7 +58,9 @@ public:
     , lhs_(std::move(lhs))
     , rhs_(std::move(rhs)) {}
 
-    double evaluate() override {
+    Value evaluate() override {
+        const Value lhs = lhs_->evaluate();
+        const Value rhs = rhs_->evaluate();
         switch (operation_)
         {
         case OperationType::kPlusOp: return lhs_->evaluate() + rhs_->evaluate();

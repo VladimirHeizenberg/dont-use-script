@@ -124,6 +124,17 @@ private:
                 std::stod(token.text())
             );
         }
+        if (Match(TokenType::kTrue)) {
+            std::cout << "parsing true!\n";
+            return std::make_unique<ConstExpressionAST>(
+                Value(true)
+            );
+        }
+        if (Match(TokenType::kFalse)) {
+            return std::make_unique<ConstExpressionAST>(
+                Value(false)
+            );
+        }
         if (Match(TokenType::kIdentifier)) {
             return std::make_unique<VariableExpression>(
                 token.text(), variables_table_

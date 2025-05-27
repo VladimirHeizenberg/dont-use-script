@@ -10,8 +10,10 @@ int main(int argc, char** argv) {
         b = +2.23e+2
         c = (a + b) - 239.2e3 + a * b
         d = c / b
+        e = true
         println(d)
         println(c)
+        print(e)
     )";
     std::stringstream ss(code);
     Lexer lexer(ss);

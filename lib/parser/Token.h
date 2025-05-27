@@ -10,6 +10,8 @@ enum class TokenType {
     // keywords
     kPrint,
     kPrintln,
+    kTrue,
+    kFalse,
 
 
     // operators
