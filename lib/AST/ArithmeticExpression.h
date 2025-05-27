@@ -9,6 +9,7 @@ enum OperationType {
     kMinusOp,
     kMulOp,
     kDivOp,
+    kNoOp,
 };
 
 class ConstExpressionAST : public ExpressionAST {
@@ -33,6 +34,8 @@ public:
     Value evaluate() override {
         Value result = expr_->evaluate();
         switch (operation_) {
+        case OperationType::kNoOp:
+            return result;
         case OperationType::kPlusOp: 
             if (result.Is<double>())
                 return result;
@@ -41,8 +44,10 @@ public:
             if (result.Is<double>()) {
                 return -result.As<double>();
             }
+            throw std::runtime_error("Wrong type for unary expression +\n");
+        default:
+            throw std::runtime_error("Wrong unary operator");
         }
-        throw std::runtime_error("Wrong unary operator");
     }
 private:
     OperationType operation_;

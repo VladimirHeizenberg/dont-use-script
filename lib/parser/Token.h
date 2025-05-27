@@ -15,7 +15,7 @@ enum class TokenType {
     kIf,
     kThen,
     kElse,
-
+    
     // operators
     kAssign, // =
     kPlus, // +

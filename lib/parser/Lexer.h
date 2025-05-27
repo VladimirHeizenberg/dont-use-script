@@ -132,8 +132,6 @@ private:
         {"if", TokenType::kIf},
         {"then", TokenType::kThen},
         {"else", TokenType::kElse},
-
-
         {"end", TokenType::kEnd},
     };
 };
