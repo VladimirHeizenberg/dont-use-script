@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
+#include <functional>
 
 #include "AST/AST.h"
 #include "Token.h"
@@ -30,23 +31,44 @@ public:
 private:
 
     statement ParseStatement() {
-        if (Match(TokenType::kPrint)) {
-            Check(TokenType::kLParenthesis);
-            statement print = std::make_unique<PrintStatement>(
-                ParseExpression(), out_
-            );
-            Check(TokenType::kRParenthesis);
-            return print;
-        }
-        if (Match(TokenType::kPrintln)) {
-            Check(TokenType::kLParenthesis);
-            statement println = std::make_unique<PrintlnStatement>(
-                ParseExpression(), out_
-            );
-            Check(TokenType::kRParenthesis);
-            return println;
-        }
+        if (Match(TokenType::kPrint)) return ParsePrintStatement();
+        if (Match(TokenType::kPrintln)) return ParsePrintlnStatement();
+        if (Match(TokenType::kIf)) return ParseIfStatement();
         return ParseAssignStatement();
+    }
+
+    statement ParsePrintStatement() {
+        Check(TokenType::kLParenthesis);
+        statement print = std::make_unique<PrintStatement>(
+            ParseExpression(), out_
+        );
+        Check(TokenType::kRParenthesis);
+        return print;
+    }
+
+    statement ParsePrintlnStatement() {
+        Check(TokenType::kLParenthesis);
+        statement println = std::make_unique<PrintlnStatement>(
+            ParseExpression(), out_
+        );
+        Check(TokenType::kRParenthesis);
+        return println;
+    }
+
+    statement ParseIfStatement() {
+        std::cout << "parsing if\n";
+        expression if_expression = ParseExpression();
+        Check(TokenType::kThen);
+        statement statement_true = ParseStatement();
+        statement statement_false = std::make_unique<EmptyStatement>();
+        if (Match(TokenType::kElse)) {
+            statement_false = ParseStatement();
+        }
+        Check(TokenType::kEnd);
+        Check(TokenType::kIf);
+        return std::make_unique<IfStatement>(
+            std::move(if_expression), std::move(statement_true), std::move(statement_false)
+        );
     }
 
     statement ParseAssignStatement() {
@@ -54,7 +76,7 @@ private:
             Token current = get();
             Match(TokenType::kIdentifier);
             Check(TokenType::kAssign);
-            return std::make_unique<AssignStatementAST>(
+            return std::make_unique<AssignStatement>(
                 current.text(), ParseExpression(), variables_table_
             );
         }
@@ -125,7 +147,6 @@ private:
             );
         }
         if (Match(TokenType::kTrue)) {
-            std::cout << "parsing true!\n";
             return std::make_unique<ConstExpressionAST>(
                 Value(true)
             );
@@ -174,4 +195,9 @@ private:
     std::vector<Token> tokens_;
     VariablesTable& variables_table_;
     std::ostream& out_;
+
+    // inline static const std::unordered_map<TokenType, std::function<std::unique_ptr<ExpressionAST>>> literals_table_ = {
+    //     {TokenType::kNumber, []() {}},
+
+    // };
 };

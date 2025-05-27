@@ -12,7 +12,9 @@ enum class TokenType {
     kPrintln,
     kTrue,
     kFalse,
-
+    kIf,
+    kThen,
+    kElse,
 
     // operators
     kAssign, // =
@@ -24,6 +26,7 @@ enum class TokenType {
     kLParenthesis, // (
     kRParenthesis, // )
 
+    kEnd,
     kEOF,
 };
 
@@ -33,6 +36,11 @@ std::ostream& operator<<(std::ostream& os, TokenType type) {
         case TokenType::kNumber:         return os << "kNumber";
         case TokenType::kPrint:          return os << "kPrint";
         case TokenType::kPrintln:        return os << "kPrintln";
+        case TokenType::kTrue:           return os << "kTrue";
+        case TokenType::kFalse:          return os << "kFalse";
+        case TokenType::kIf:             return os << "kIf";
+        case TokenType::kThen:           return os << "kThen";
+        case TokenType::kElse:           return os << "kElse";
         case TokenType::kAssign:         return os << "kAssign";
         case TokenType::kPlus:           return os << "kPlus";
         case TokenType::kMinus:          return os << "kMinus";
@@ -40,6 +48,7 @@ std::ostream& operator<<(std::ostream& os, TokenType type) {
         case TokenType::kDiv:            return os << "kDiv";
         case TokenType::kLParenthesis:   return os << "kLParenthesis";
         case TokenType::kRParenthesis:   return os << "kRParenthesis";
+        case TokenType::kEnd:            return os << "kEnd";
         case TokenType::kEOF:            return os << "kEOF";
         default:              return os << "Unknown TokenType";
     }

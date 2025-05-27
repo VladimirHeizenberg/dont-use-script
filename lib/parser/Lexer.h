@@ -129,5 +129,11 @@ private:
         {"println", TokenType::kPrintln},
         {"true", TokenType::kTrue},
         {"false", TokenType::kFalse},
+        {"if", TokenType::kIf},
+        {"then", TokenType::kThen},
+        {"else", TokenType::kElse},
+
+
+        {"end", TokenType::kEnd},
     };
 };

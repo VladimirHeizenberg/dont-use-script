@@ -6,12 +6,14 @@
 
 class Value {
 public:
+    using Array = std::vector<Value>;
+
     Value() = default;
     Value(double v) : value_(v) {}
     Value(bool v) : value_(v) {}
     Value(const std::string& v) : value_(v) {}
     Value(const char* v) : value_(std::string(v)) {}
-    Value(const std::vector<Value>& v) : value_(v) {}
+    Value(const Array& v) : value_(v) {}
 
     template<typename T>
     bool Is() const {
@@ -32,13 +34,21 @@ public:
         return *this;
     }
 
+    operator bool() {
+        if (Is<bool>()) return As<bool>();
+        if (Is<double>()) return As<double>() != 0;
+        if (Is<Array>()) return As<Array>().empty();
+        if (Is<std::string>()) return As<std::string>().empty();
+        throw std::runtime_error("illegal cast");
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Value& v) {
         if (v.Is<double>())      os << v.As<double>();
         else if (v.Is<bool>())   os << (v.As<bool>() ? "true" : "false");
         else if (v.Is<std::string>()) os << "\"" << v.As<std::string>() << "\"";
-        else if (v.Is<std::vector<Value>>()) {
+        else if (v.Is<Array>()) {
             os << "[";
-            for (const auto& c : v.As<std::vector<Value>>()) {
+            for (const auto& c : v.As<Array>()) {
                 os << c << ", ";
             }
             os << "]";
@@ -57,12 +67,12 @@ public:
         if (Is<std::string>() && rhs.Is<std::string>()) {
             return As<std::string>() + rhs.As<std::string>();
         }
-        if (Is<std::vector<Value>>() && rhs.Is<std::vector<Value>>()) {
-            auto result = As<std::vector<Value>>();
+        if (Is<Array>() && rhs.Is<Array>()) {
+            auto result = As<Array>();
             result.insert(
                 result.end(), 
-                rhs.As<std::vector<Value>>().begin(),
-                rhs.As<std::vector<Value>>().end()
+                rhs.As<Array>().begin(),
+                rhs.As<Array>().end()
             );
             return result;
         }
@@ -100,7 +110,7 @@ public:
             }
             return result;
         }
-        if (Is<std::vector<Value>>() && rhs.Is<double>()) {
+        if (Is<Array>() && rhs.Is<double>()) {
             Value result = *this;
             double repeat = rhs.As<double>();
             int x = 0;

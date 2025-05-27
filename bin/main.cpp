@@ -9,11 +9,11 @@ int main(int argc, char** argv) {
         a = +3
         b = +2.23e+2
         c = (a + b) - 239.2e3 + a * b
-        d = c / b
-        e = true
-        println(d)
-        println(c)
-        print(e)
+        if true then
+            println(c)
+        else
+            println(a)
+        end if
     )";
     std::stringstream ss(code);
     Lexer lexer(ss);

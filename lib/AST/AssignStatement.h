@@ -7,9 +7,9 @@
 #include "Statement.h"
 #include "VariablesTable.h"
 
-class AssignStatementAST: public StatementAST {
+class AssignStatement: public StatementAST {
 public:
-    AssignStatementAST(const std::string& name, 
+    AssignStatement(const std::string& name, 
                        std::unique_ptr<ExpressionAST> expr,
                        VariablesTable& table)
     : name_(name)
