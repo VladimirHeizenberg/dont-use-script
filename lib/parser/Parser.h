@@ -59,16 +59,24 @@ private:
         std::cout << "parsing if\n";
         expression if_expression = ParseExpression();
         Check(TokenType::kThen);
-        statement statement_true = ParseStatement();
+        statement statement_true = ParseScopeStatement();
         statement statement_false = std::make_unique<EmptyStatement>();
         if (Match(TokenType::kElse)) {
-            statement_false = ParseStatement();
+            statement_false = ParseScopeStatement();
         }
         Check(TokenType::kEnd);
         Check(TokenType::kIf);
         return std::make_unique<IfStatement>(
             std::move(if_expression), std::move(statement_true), std::move(statement_false)
         );
+    }
+
+    statement ParseScopeStatement() {
+        std::unique_ptr<ScopeStatement> scope = std::make_unique<ScopeStatement>();
+        while (get().type() != TokenType::kElse && get().type() != TokenType::kEnd) {
+            scope->add(ParseStatement());
+        }
+        return scope;
     }
 
     statement ParseAssignStatement() {
