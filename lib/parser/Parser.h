@@ -107,6 +107,11 @@ private:
                 OperationType::kMinusOp, ParseLiteral()
             );
         }
+        if (Match(TokenType::kPlus)) {
+            return std::make_unique<UnaryExpressionAST>(
+                OperationType::kPlusOp, ParseLiteral()
+            );
+        }
         return std::make_unique<UnaryExpressionAST>(
             OperationType::kPlusOp, ParseLiteral()
         );

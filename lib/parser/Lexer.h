@@ -21,7 +21,7 @@ public:
             char current = char_source_.peek();
             if (IsDigit(current) || current == '.') TokenizeNumber();
             else if (IsOperator(current)) TokenizeOperator();
-            else if (IsLetterOrLowLine(current)) TokenizeIdetifier();
+            else if (IsLetterOrLowLine(current)) TokenizeIdentifier();
             else char_source_.get(); // skip
         }
         AddToken(TokenType::kEOF);
@@ -59,6 +59,11 @@ private:
             number.push_back(current);
             char_source_.get();
         }
+        if (number.back() == 'e' || number.back() == 'E' || 
+            number.back() == '+' || number.back() == '-' || 
+            number.back() == '.') {
+            throw std::runtime_error("Number ends abruptly: " + number);
+        }
         AddToken(TokenType::kNumber, number);
     }
 
@@ -67,7 +72,7 @@ private:
         AddToken(kOperatorTable.at(std::string{current}));
     }
 
-    void TokenizeIdetifier() {
+    void TokenizeIdentifier() {
         std::string name;
         while (true) {
             char current = char_source_.peek();
