@@ -20,7 +20,7 @@ public:
         while(!char_source_.eof()) {
             char current = char_source_.peek();
             if (IsDigit(current) || current == '.') TokenizeNumber();
-            else if (IsOperator(current)) TokenizeOperator();
+            else if (IsOperator(current) || current == '!') TokenizeOperator();
             else if (IsLetterOrLowLine(current)) TokenizeIdentifier();
             else char_source_.get(); // skip
         }
@@ -69,7 +69,11 @@ private:
 
     void TokenizeOperator() {
         char current = char_source_.get();
-        AddToken(kOperatorTable.at(std::string{current}));
+        std::string operator_str = std::string{current};
+        while (kOperatorTable.contains(operator_str + std::string{(char)char_source_.peek()})) {
+            operator_str += std::string{(char)char_source_.get()};
+        }
+        AddToken(kOperatorTable.at(operator_str));
     }
 
     void TokenizeIdentifier() {
@@ -115,23 +119,34 @@ private:
     std::istream& char_source_;
     std::vector<Token> tokens;
     inline static const std::unordered_map<std::string, TokenType> kOperatorTable = {
-        {"+", TokenType::kPlus},
-        {"-", TokenType::kMinus},
-        {"*", TokenType::kMul},
-        {"/", TokenType::kDiv},
-        {"=", TokenType::kAssign},
-        {"(", TokenType::kLParenthesis},
-        {")", TokenType::kRParenthesis},
+        {"+",   TokenType::kPlus},
+        {"-",   TokenType::kMinus},
+        {"*",   TokenType::kMul},
+        {"/",   TokenType::kDiv},
+        {"=",   TokenType::kAssign},
+        {"==",  TokenType::kEqual},
+        {"!=",  TokenType::kNotEqual},
+        {"<",   TokenType::kLess},
+        {">",   TokenType::kGreater},
+        {"<=",  TokenType::kLessOrEqual},
+        {">=",  TokenType::kGreaterOrEqual},
+        {"(",   TokenType::kLParenthesis},
+        {")",   TokenType::kRParenthesis},
     };
 
     inline static const std::unordered_map<std::string, TokenType> kKeywordsTable = {
-        {"print", TokenType::kPrint},
+        {"print",   TokenType::kPrint},
         {"println", TokenType::kPrintln},
-        {"true", TokenType::kTrue},
-        {"false", TokenType::kFalse},
-        {"if", TokenType::kIf},
-        {"then", TokenType::kThen},
-        {"else", TokenType::kElse},
-        {"end", TokenType::kEnd},
+        {"true",    TokenType::kTrue},
+        {"false",   TokenType::kFalse},
+        {"if",      TokenType::kIf},
+        {"then",    TokenType::kThen},
+        {"else",    TokenType::kElse},
+        {"end",     TokenType::kEnd},
+
+        // special words still this is operators
+        {"and",     TokenType::kLogicalAnd},
+        {"or",      TokenType::kLogicalOr},
+        {"not",     TokenType::kLogicalNot},
     };
 };

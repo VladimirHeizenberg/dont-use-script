@@ -56,7 +56,6 @@ private:
     }
 
     statement ParseIfStatement() {
-        std::cout << "parsing if\n";
         expression if_expression = ParseExpression();
         Check(TokenType::kThen);
         statement statement_true = ParseScopeStatement();
@@ -92,7 +91,62 @@ private:
     }
 
     expression ParseExpression() {
-        return ParseAdd();
+        return ParseLogicalOr();
+    }
+
+    expression ParseLogicalOr() {
+        expression expr = ParseLogicalAnd();
+        if (Match(TokenType::kLogicalOr)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kLogicalOr, std::move(expr), ParseLogicalAnd()
+            );
+        }
+        return expr;
+    }
+
+    expression ParseLogicalAnd() {
+        expression expr = ParseEqual();
+        if (Match(TokenType::kLogicalAnd)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kLogicalAnd, std::move(expr), ParseEqual()
+            );
+        }
+        return expr;
+    }
+    expression ParseEqual() {
+        expression expr = ParseRelation();
+        if (Match(TokenType::kEqual)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kEqual, std::move(expr), ParseRelation()
+            );
+        } else if (Match(TokenType::kNotEqual)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kNotEqual, std::move(expr), ParseRelation()
+            );
+        }
+        return expr;
+    }
+
+    expression ParseRelation() {
+        expression expr = ParseAdd();
+        if (Match(TokenType::kLess)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kLess, std::move(expr), ParseAdd()
+            );
+        } else if (Match(TokenType::kGreater)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kGreater, std::move(expr), ParseAdd()
+            );
+        } else if (Match(TokenType::kLessOrEqual)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kLessOrEqual, std::move(expr), ParseAdd()
+            );
+        } else if (Match(TokenType::kGreaterOrEqual)) {
+            expr = std::make_unique<BinaryExpressionAST>(
+                OperationType::kGreaterOrEqual, std::move(expr), ParseAdd()
+            );
+        }
+        return expr;
     }
 
     expression ParseAdd() {
@@ -114,15 +168,15 @@ private:
     }
 
     expression ParseMult() {
-        expression expr = ParseUnary();
+        expression expr = ParseUnaryPlusMinus();
         while (true) {
             if (Match(TokenType::kMul)) {
                 expr = std::make_unique<BinaryExpressionAST>(
-                    OperationType::kMulOp, std::move(expr), ParseUnary()
+                    OperationType::kMulOp, std::move(expr), ParseUnaryPlusMinus()
                 );
             } else if (Match(TokenType::kDiv)) {
                 expr = std::make_unique<BinaryExpressionAST>(
-                    OperationType::kDivOp, std::move(expr), ParseUnary()
+                    OperationType::kDivOp, std::move(expr), ParseUnaryPlusMinus()
                 );
             } else {
                 break;
@@ -131,7 +185,7 @@ private:
         return expr;
     }
 
-    expression ParseUnary() {
+    expression ParseUnaryPlusMinus() {
         if (Match(TokenType::kMinus)) {
             return std::make_unique<UnaryExpressionAST>(
                 OperationType::kMinusOp, ParseLiteral()
@@ -145,6 +199,14 @@ private:
         return std::make_unique<UnaryExpressionAST>(
             OperationType::kNoOp, ParseLiteral()
         );
+    }
+
+    expression ParseLogicalNot() {
+        if (Match(TokenType::kLogicalNot)) {
+            return std::make_unique<UnaryExpressionAST>(
+                OperationType::kLogicalNot, ParseLiteral()
+            );
+        }
     }
 
     expression ParseLiteral() {
@@ -204,9 +266,4 @@ private:
     std::vector<Token> tokens_;
     VariablesTable& variables_table_;
     std::ostream& out_;
-
-    // inline static const std::unordered_map<TokenType, std::function<std::unique_ptr<ExpressionAST>>> literals_table_ = {
-    //     {TokenType::kNumber, []() {}},
-
-    // };
 };

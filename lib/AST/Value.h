@@ -133,6 +133,58 @@ public:
         }
         throw std::runtime_error("TypeError");
     }
+
+    bool operator<(const Value& rhs) const {
+        if (Is<double>() || Is<bool>()) {
+            return As<double>() < rhs.As<double>();
+        }
+        if (Is<std::string>() && rhs.Is<std::string>()) {
+            return As<std::string>() < rhs.As<std::string>();
+        }
+        throw std::runtime_error("Invalid operands for operator<");
+    }
+
+    bool operator>(const Value& rhs) const {
+        return rhs < *this;
+    }
+
+    bool operator<=(const Value& rhs) const {
+        return !(rhs < *this);
+    }
+
+    bool operator>=(const Value& rhs) const {
+        return !(*this < rhs);
+    }
+
+    bool operator==(const Value& rhs) const {
+        if (Is<double>() || Is<bool>()) {
+            return As<double>() == rhs.As<double>();
+        }
+        if (Is<std::string>() && rhs.Is<std::string>()) {
+            return As<std::string>() == rhs.As<std::string>();
+        }
+        if (Is<Array>() && rhs.Is<Array>()) {
+            return As<Array>() == rhs.As<Array>();
+        }
+        return false;
+    }
+
+    bool operator!=(const Value& rhs) const {
+        return !(*this == rhs);
+    }
+
+    Value operator&(const Value& rhs) const {
+        return As<bool>() && rhs.As<bool>();
+    }
+
+    Value operator|(const Value& rhs) const {
+        return As<bool>() || rhs.As<bool>();
+    }
+
+    Value operator!() const {
+        return !As<bool>();
+    }
+
 private:
     std::any value_;
 };

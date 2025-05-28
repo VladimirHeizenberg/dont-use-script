@@ -10,6 +10,16 @@ enum OperationType {
     kMulOp,
     kDivOp,
     kNoOp,
+
+    kLogicalAnd,
+    kLogicalOr,
+    kLogicalNot,
+    kEqual,
+    kNotEqual,
+    kLess,
+    kGreater,
+    kLessOrEqual,
+    kGreaterOrEqual,
 };
 
 class ConstExpressionAST : public ExpressionAST {
@@ -27,7 +37,7 @@ private:
 class UnaryExpressionAST : public ExpressionAST {
 public:
     UnaryExpressionAST(OperationType operation, 
-                     std::unique_ptr<ExpressionAST> expr)
+                       std::unique_ptr<ExpressionAST> expr)
     : operation_(operation)
     , expr_(std::move(expr)) {}
 
@@ -45,6 +55,8 @@ public:
                 return -result.As<double>();
             }
             throw std::runtime_error("Wrong type for unary expression +\n");
+        case OperationType::kLogicalNot:
+            return !result;
         default:
             throw std::runtime_error("Wrong unary operator");
         }
@@ -72,6 +84,14 @@ public:
         case OperationType::kMinusOp: return lhs_->evaluate() - rhs_->evaluate();
         case OperationType::kMulOp: return lhs_->evaluate() * rhs_->evaluate();
         case OperationType::kDivOp: return lhs_->evaluate() / rhs_->evaluate();
+        case OperationType::kLogicalAnd: return lhs_->evaluate() & rhs_->evaluate();
+        case OperationType::kLogicalOr: return lhs_->evaluate() | rhs_->evaluate();
+        case OperationType::kLess: return lhs_->evaluate() < rhs_->evaluate();
+        case OperationType::kGreater: return lhs_->evaluate() > rhs_->evaluate();
+        case OperationType::kLessOrEqual: return lhs_->evaluate() <= rhs_->evaluate();
+        case OperationType::kGreaterOrEqual: return lhs_->evaluate() >= rhs_->evaluate();
+        case OperationType::kEqual: return lhs_->evaluate() == rhs_->evaluate();
+        case OperationType::kNotEqual: return lhs_->evaluate() != rhs_->evaluate();
         }
         throw std::runtime_error("Unknow operation");
     }

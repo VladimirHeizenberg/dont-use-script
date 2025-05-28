@@ -22,6 +22,15 @@ enum class TokenType {
     kMinus, // -
     kMul, // *
     kDiv, // /
+    kEqual, // ==
+    kNotEqual, // !=
+    kLess, // <
+    kGreater, // >
+    kLessOrEqual, // <=
+    kGreaterOrEqual, // >=
+    kLogicalAnd,
+    kLogicalOr,
+    kLogicalNot,
 
     kLParenthesis, // (
     kRParenthesis, // )
@@ -32,27 +41,46 @@ enum class TokenType {
 
 std::ostream& operator<<(std::ostream& os, TokenType type) {
     switch (type) {
-        case TokenType::kIdentifier:     return os << "kIdentifier";
-        case TokenType::kNumber:         return os << "kNumber";
-        case TokenType::kPrint:          return os << "kPrint";
-        case TokenType::kPrintln:        return os << "kPrintln";
-        case TokenType::kTrue:           return os << "kTrue";
-        case TokenType::kFalse:          return os << "kFalse";
-        case TokenType::kIf:             return os << "kIf";
-        case TokenType::kThen:           return os << "kThen";
-        case TokenType::kElse:           return os << "kElse";
-        case TokenType::kAssign:         return os << "kAssign";
-        case TokenType::kPlus:           return os << "kPlus";
-        case TokenType::kMinus:          return os << "kMinus";
-        case TokenType::kMul:            return os << "kMul";
-        case TokenType::kDiv:            return os << "kDiv";
-        case TokenType::kLParenthesis:   return os << "kLParenthesis";
-        case TokenType::kRParenthesis:   return os << "kRParenthesis";
-        case TokenType::kEnd:            return os << "kEnd";
-        case TokenType::kEOF:            return os << "kEOF";
-        default:              return os << "Unknown TokenType";
+        case TokenType::kIdentifier:       return os << "kIdentifier";
+        case TokenType::kNumber:           return os << "kNumber";
+
+        // keywords
+        case TokenType::kPrint:            return os << "kPrint";
+        case TokenType::kPrintln:          return os << "kPrintln";
+        case TokenType::kTrue:             return os << "kTrue";
+        case TokenType::kFalse:            return os << "kFalse";
+        case TokenType::kIf:               return os << "kIf";
+        case TokenType::kThen:             return os << "kThen";
+        case TokenType::kElse:             return os << "kElse";
+
+        // operators
+        case TokenType::kAssign:           return os << "kAssign";
+        case TokenType::kPlus:             return os << "kPlus";
+        case TokenType::kMinus:            return os << "kMinus";
+        case TokenType::kMul:              return os << "kMul";
+        case TokenType::kDiv:              return os << "kDiv";
+        case TokenType::kEqual:            return os << "kEqual";
+        case TokenType::kNotEqual:         return os << "kNotEqual";
+        case TokenType::kLess:             return os << "kLess";
+        case TokenType::kGreater:          return os << "kGreater";
+        case TokenType::kLessOrEqual:      return os << "kLessOrEqual";
+        case TokenType::kGreaterOrEqual:   return os << "kGreaterOrEqual";
+
+        case TokenType::kLogicalAnd:       return os << "kLogicalAnd";
+        case TokenType::kLogicalOr:        return os << "kLogicalOr";
+        case TokenType::kLogicalNot:       return os << "kLogicalNot";
+
+        case TokenType::kLParenthesis:     return os << "kLParenthesis";
+        case TokenType::kRParenthesis:     return os << "kRParenthesis";
+
+        case TokenType::kEnd:              return os << "kEnd";
+        case TokenType::kEOF:              return os << "kEOF";
+
+        default:                           return os << "Unknown TokenType";
     }
 }
+
+
 
 class Token {
 public:
