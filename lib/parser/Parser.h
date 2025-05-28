@@ -207,6 +207,7 @@ private:
                 OperationType::kLogicalNot, ParseLiteral()
             );
         }
+        return ParseLiteral();
     }
 
     expression ParseLiteral() {

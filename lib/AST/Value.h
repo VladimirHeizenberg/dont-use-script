@@ -34,7 +34,7 @@ public:
         return *this;
     }
 
-    operator bool() {
+    operator bool() const {
         if (Is<bool>()) return As<bool>();
         if (Is<double>()) return As<double>() != 0;
         if (Is<Array>()) return As<Array>().empty();
@@ -166,7 +166,10 @@ public:
         if (Is<Array>() && rhs.Is<Array>()) {
             return As<Array>() == rhs.As<Array>();
         }
-        return false;
+        if (Is<bool>() && rhs.Is<bool>()) {
+            return As<bool>() == rhs.As<bool>();
+        }
+        throw std::runtime_error("incomparable types\n");
     }
 
     bool operator!=(const Value& rhs) const {
@@ -174,15 +177,15 @@ public:
     }
 
     Value operator&(const Value& rhs) const {
-        return As<bool>() && rhs.As<bool>();
+        return static_cast<bool>(*this) && static_cast<bool>(rhs);
     }
 
     Value operator|(const Value& rhs) const {
-        return As<bool>() || rhs.As<bool>();
+        return static_cast<bool>(*this) || static_cast<bool>(rhs);
     }
 
     Value operator!() const {
-        return !As<bool>();
+        return !static_cast<bool>(*this);
     }
 
 private:

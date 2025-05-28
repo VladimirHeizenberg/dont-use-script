@@ -6,13 +6,21 @@
 
 int main(int argc, char** argv) {
     std::string code = R"(
-        a = +3
-        b = +2.23e+2
-        c = (a + b) - 239.2e3 + a * b
-        if true then
-            println(c)
+        a = 1 and 2 or 3
+        println(a)
+        if 2 + 2 == 4 and 3 * 5 == 15 then 
+            println(5) 
+        end if
+        b = true
+        c = false
+        if b or c then
+            println(566)
+        end if
+
+        if b and c then
+            println(239)
         else
-            println(a)
+            println(566)
         end if
     )";
     std::stringstream ss(code);

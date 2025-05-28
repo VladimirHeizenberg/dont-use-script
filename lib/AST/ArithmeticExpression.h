@@ -92,8 +92,8 @@ public:
         case OperationType::kGreaterOrEqual: return lhs_->evaluate() >= rhs_->evaluate();
         case OperationType::kEqual: return lhs_->evaluate() == rhs_->evaluate();
         case OperationType::kNotEqual: return lhs_->evaluate() != rhs_->evaluate();
+        default: throw std::runtime_error("Unknow operation");
         }
-        throw std::runtime_error("Unknow operation");
     }
 
 private:
