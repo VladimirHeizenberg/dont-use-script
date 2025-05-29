@@ -22,6 +22,10 @@ enum class TokenType {
     kMinus, // -
     kMul, // *
     kDiv, // /
+    kPlusAssign, // +=
+    kMinusAssign, // -=
+    kMulAssign, // *=
+    kDivAssign, // /=
     kEqual, // ==
     kNotEqual, // !=
     kLess, // <

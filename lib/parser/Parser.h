@@ -14,6 +14,8 @@ class Parser {
 public:
     using expression    = std::unique_ptr<ExpressionAST>;
     using statement     = std::unique_ptr<StatementAST>;
+    using token_and_op  = std::pair<TokenType, OperationType>;
+    using table         = const std::vector<token_and_op>;
 
     Parser(std::vector<Token> tokens, VariablesTable& table, std::ostream& out)
     : tokens_(std::move(tokens))
@@ -90,114 +92,68 @@ private:
         throw std::runtime_error("not now");
     }
 
+    template <typename NextPriority>
+    expression ParseBinaryOperations(NextPriority next_level, table& table) {
+        expression expr = (this->*next_level)();
+        bool matched = false;
+        while (true) {
+            matched = false;
+            for (const auto& [token, operation] : table) {
+                if (Match(token)) {
+                    expr = std::make_unique<BinaryExpressionAST>(
+                        operation, std::move(expr), (this->*next_level)()
+                    );
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) break;
+        }
+        return expr;
+    }
+
+
     expression ParseExpression() {
         return ParseLogicalOr();
     }
 
     expression ParseLogicalOr() {
-        expression expr = ParseLogicalAnd();
-        if (Match(TokenType::kLogicalOr)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kLogicalOr, std::move(expr), ParseLogicalAnd()
-            );
-        }
-        return expr;
+        return ParseBinaryOperations(&Parser::ParseLogicalAnd, logical_or_table_);
     }
 
     expression ParseLogicalAnd() {
-        expression expr = ParseEqual();
-        if (Match(TokenType::kLogicalAnd)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kLogicalAnd, std::move(expr), ParseEqual()
-            );
-        }
-        return expr;
+        return ParseBinaryOperations(&Parser::ParseEqual, logical_and_table_);
     }
+
     expression ParseEqual() {
-        expression expr = ParseRelation();
-        if (Match(TokenType::kEqual)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kEqual, std::move(expr), ParseRelation()
-            );
-        } else if (Match(TokenType::kNotEqual)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kNotEqual, std::move(expr), ParseRelation()
-            );
-        }
-        return expr;
+        return ParseBinaryOperations(&Parser::ParseRelation, equality_table_);
     }
 
     expression ParseRelation() {
-        expression expr = ParseAdd();
-        if (Match(TokenType::kLess)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kLess, std::move(expr), ParseAdd()
-            );
-        } else if (Match(TokenType::kGreater)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kGreater, std::move(expr), ParseAdd()
-            );
-        } else if (Match(TokenType::kLessOrEqual)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kLessOrEqual, std::move(expr), ParseAdd()
-            );
-        } else if (Match(TokenType::kGreaterOrEqual)) {
-            expr = std::make_unique<BinaryExpressionAST>(
-                OperationType::kGreaterOrEqual, std::move(expr), ParseAdd()
-            );
-        }
-        return expr;
+        return ParseBinaryOperations(&Parser::ParseAdd, relations_table_);
     }
 
     expression ParseAdd() {
-        expression expr = ParseMult();
-        while (true) {
-            if (Match(TokenType::kPlus)) {
-                expr = std::make_unique<BinaryExpressionAST>(
-                    OperationType::kPlusOp, std::move(expr), ParseMult()
-                );
-            } else if (Match(TokenType::kMinus)) {
-                expr = std::make_unique<BinaryExpressionAST>(
-                    OperationType::kMinusOp, std::move(expr), ParseMult()
-                );
-            } else {
-                break;
-            }
-        }
-        return expr;
+        return ParseBinaryOperations(&Parser::ParseMult, add_table_);
     }
 
     expression ParseMult() {
-        expression expr = ParseUnaryPlusMinus();
-        while (true) {
-            if (Match(TokenType::kMul)) {
-                expr = std::make_unique<BinaryExpressionAST>(
-                    OperationType::kMulOp, std::move(expr), ParseUnaryPlusMinus()
-                );
-            } else if (Match(TokenType::kDiv)) {
-                expr = std::make_unique<BinaryExpressionAST>(
-                    OperationType::kDivOp, std::move(expr), ParseUnaryPlusMinus()
-                );
-            } else {
-                break;
-            }
-        }
-        return expr;
+        return ParseBinaryOperations(&Parser::ParseUnaryPlusMinus, mult_table_);
     }
 
     expression ParseUnaryPlusMinus() {
         if (Match(TokenType::kMinus)) {
             return std::make_unique<UnaryExpressionAST>(
-                OperationType::kMinusOp, ParseLiteral()
+                OperationType::kMinusOp, ParseLogicalNot()
             );
         }
         if (Match(TokenType::kPlus)) {
             return std::make_unique<UnaryExpressionAST>(
-                OperationType::kPlusOp, ParseLiteral()
+                OperationType::kPlusOp, ParseLogicalNot()
             );
         }
         return std::make_unique<UnaryExpressionAST>(
-            OperationType::kNoOp, ParseLiteral()
+            OperationType::kNoOp, ParseLogicalNot()
         );
     }
 
@@ -267,4 +223,35 @@ private:
     std::vector<Token> tokens_;
     VariablesTable& variables_table_;
     std::ostream& out_;
+
+    static inline table logical_or_table_ = {
+         {TokenType::kLogicalOr, OperationType::kLogicalOr},
+    };
+
+    static inline table logical_and_table_ = {
+         {TokenType::kLogicalAnd, OperationType::kLogicalAnd},
+    };
+
+    static inline table equality_table_ = {
+        {TokenType::kEqual,     OperationType::kEqual},
+        {TokenType::kNotEqual,  OperationType::kNotEqual},
+    };
+
+    static inline table relations_table_ = {
+        {TokenType::kLess,            OperationType::kLess},
+        {TokenType::kGreater,         OperationType::kGreater},
+        {TokenType::kLessOrEqual,     OperationType::kLessOrEqual},
+        {TokenType::kGreaterOrEqual,  OperationType::kGreaterOrEqual},
+    };
+
+    static inline table add_table_ = {
+        {TokenType::kPlus,   OperationType::kPlusOp},
+        {TokenType::kMinus,  OperationType::kMinusOp},
+    };
+
+    static inline table mult_table_ = {
+        {TokenType::kMul, OperationType::kMulOp},
+        {TokenType::kDiv, OperationType::kDivOp},
+    };
+
 };
