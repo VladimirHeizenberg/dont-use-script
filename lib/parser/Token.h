@@ -14,7 +14,9 @@ enum class TokenType {
     kFalse,
     kIf,
     kThen,
+    kElif,
     kElse,
+    kWhile,
     
     // operators
     kAssign, // =
@@ -35,6 +37,8 @@ enum class TokenType {
     kLogicalAnd,
     kLogicalOr,
     kLogicalNot,
+
+    
 
     kLParenthesis, // (
     kRParenthesis, // )

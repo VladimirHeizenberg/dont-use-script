@@ -12,10 +12,12 @@
 
 class Parser {
 public:
-    using expression    = std::unique_ptr<ExpressionAST>;
-    using statement     = std::unique_ptr<StatementAST>;
-    using token_and_op  = std::pair<TokenType, OperationType>;
-    using table         = const std::vector<token_and_op>;
+    using expression            = std::unique_ptr<ExpressionAST>;
+    using statement             = std::unique_ptr<StatementAST>;
+    using token_and_op          = std::pair<TokenType, OperationType>;
+    using operators_table       = const std::vector<token_and_op>;
+    using token_and_assign      = std::pair<TokenType, AssignmentOperationType>;
+    using assignment_table      = const std::vector<token_and_assign>;
 
     Parser(std::vector<Token> tokens, VariablesTable& table, std::ostream& out)
     : tokens_(std::move(tokens))
@@ -36,6 +38,7 @@ private:
         if (Match(TokenType::kPrint)) return ParsePrintStatement();
         if (Match(TokenType::kPrintln)) return ParsePrintlnStatement();
         if (Match(TokenType::kIf)) return ParseIfStatement();
+        if (Match(TokenType::kWhile)) return ParseWhileStatement();
         return ParseAssignStatement();
     }
 
@@ -72,6 +75,16 @@ private:
         );
     }
 
+    statement ParseWhileStatement() {
+        expression while_expression = ParseExpression();
+        statement while_statement = ParseScopeStatement();
+        Check(TokenType::kEnd);
+        Check(TokenType::kWhile);
+        return std::make_unique<WhileStatement>(
+            std::move(while_expression), std::move(while_statement)
+        );
+    }
+
     statement ParseScopeStatement() {
         std::unique_ptr<ScopeStatement> scope = std::make_unique<ScopeStatement>();
         while (get().type() != TokenType::kElse && get().type() != TokenType::kEnd) {
@@ -81,19 +94,20 @@ private:
     }
 
     statement ParseAssignStatement() {
-        if (get().type() == TokenType::kIdentifier && get(1).type() == TokenType::kAssign) {
-            Token current = get();
-            Match(TokenType::kIdentifier);
-            Check(TokenType::kAssign);
-            return std::make_unique<AssignStatement>(
-                current.text(), ParseExpression(), variables_table_
-            );
-        }
+        for (auto& [token, assignment]: assignment_table_)
+            if (get().type() == TokenType::kIdentifier && get(1).type() == token) {
+                Token current = get();
+                Match(TokenType::kIdentifier);
+                Check(token);
+                return std::make_unique<AssignStatement>(
+                    current.text(), ParseExpression(), variables_table_, assignment
+                );
+            }
         throw std::runtime_error("not now");
     }
 
     template <typename NextPriority>
-    expression ParseBinaryOperations(NextPriority next_level, table& table) {
+    expression ParseBinaryOperations(NextPriority next_level, operators_table& table) {
         expression expr = (this->*next_level)();
         bool matched = false;
         while (true) {
@@ -224,34 +238,41 @@ private:
     VariablesTable& variables_table_;
     std::ostream& out_;
 
-    static inline table logical_or_table_ = {
+    static inline operators_table logical_or_table_ = {
          {TokenType::kLogicalOr, OperationType::kLogicalOr},
     };
 
-    static inline table logical_and_table_ = {
+    static inline operators_table logical_and_table_ = {
          {TokenType::kLogicalAnd, OperationType::kLogicalAnd},
     };
 
-    static inline table equality_table_ = {
+    static inline operators_table equality_table_ = {
         {TokenType::kEqual,     OperationType::kEqual},
         {TokenType::kNotEqual,  OperationType::kNotEqual},
     };
 
-    static inline table relations_table_ = {
+    static inline operators_table relations_table_ = {
         {TokenType::kLess,            OperationType::kLess},
         {TokenType::kGreater,         OperationType::kGreater},
         {TokenType::kLessOrEqual,     OperationType::kLessOrEqual},
         {TokenType::kGreaterOrEqual,  OperationType::kGreaterOrEqual},
     };
 
-    static inline table add_table_ = {
+    static inline operators_table add_table_ = {
         {TokenType::kPlus,   OperationType::kPlusOp},
         {TokenType::kMinus,  OperationType::kMinusOp},
     };
 
-    static inline table mult_table_ = {
+    static inline operators_table mult_table_ = {
         {TokenType::kMul, OperationType::kMulOp},
         {TokenType::kDiv, OperationType::kDivOp},
     };
 
+    static inline assignment_table assignment_table_ = {
+        {TokenType::kAssign,        AssignmentOperationType::kAssign},
+        {TokenType::kPlusAssign,    AssignmentOperationType::kPlusAssign},
+        {TokenType::kMinusAssign,   AssignmentOperationType::kMinusAssign},
+        {TokenType::kMulAssign,     AssignmentOperationType::kMulAssign},
+        {TokenType::kDivAssign,     AssignmentOperationType::kDivAssign},
+    };
 };

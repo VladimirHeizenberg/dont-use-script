@@ -9,5 +9,6 @@
 #include "PrintStatement.h"
 #include "IfStatement.h"
 #include "ScopeStatement.h"
+#include "WhileStatement.h"
 
 #include "VariablesTable.h"

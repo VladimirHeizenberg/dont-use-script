@@ -43,9 +43,9 @@ TEST(BranchTestSuite, ComplexIfTest) {
         v = 100 * 2 + 10 * 3 + 9
         if v == 30 then
             print(30)
-        else if v == 366 then
+        elif v == 366 then
             print(366)
-        else if v == 239 then
+        elif v == 239 then
             print(239)
         else
             print(0)
@@ -94,7 +94,7 @@ TEST(LoopTestSuit, ForLoop) {
 TEST(LoopTestSuit, WhileLoop) {
     std::string code = R"(
         s = "ITMO"
-        while  len(s) < 12
+        while len(s) < 12
             s = s * 2
         end while
         print(s)
