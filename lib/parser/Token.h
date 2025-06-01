@@ -97,11 +97,11 @@ public:
     : type_(type)
     , text_(text) {}
 
-    TokenType type() {
+    TokenType Type() const {
         return type_;
     }
 
-    const std::string& text() {
+    const std::string& Text() const {
         return text_;
     }
 

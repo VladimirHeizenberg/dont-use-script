@@ -9,20 +9,22 @@
 
 #include "Token.h"
 #include "AST/AST.h"
+#include "CharSourse.h"
 
 class Lexer {
 public:
-    Lexer(std::istream& char_source)
-    : char_source_(char_source)
+    Lexer(std::unique_ptr<CharSource> char_source)
+    : char_source_(std::move(char_source))
     , tokens(std::vector<Token>()) {}
 
     std::vector<Token> tokenize() {
-        while(!char_source_.eof()) {
-            char current = char_source_.peek();
+        while(!char_source_->eof()) {
+            char current = char_source_->peek();
             if (IsDigit(current) || current == '.') TokenizeNumber();
             else if (IsOperator(current) || current == '!') TokenizeOperator();
             else if (IsLetterOrLowLine(current)) TokenizeIdentifier();
-            else char_source_.get(); // skip
+            else if (current == '"') TokenizeString();
+            else char_source_->get(); // skip
         }
         AddToken(TokenType::kEOF);
         return std::move(tokens);
@@ -34,7 +36,7 @@ private:
         std::string number;
         bool point = false, exponent = false;
         while (true) {
-            char current = char_source_.peek();
+            char current = char_source_->peek();
             if (current == '.') {
                 if (!point) {
                     point = true;
@@ -57,7 +59,7 @@ private:
                 break;
             }
             number.push_back(current);
-            char_source_.get();
+            char_source_->get();
         }
         if (number.back() == 'e' || number.back() == 'E' || 
             number.back() == '+' || number.back() == '-' || 
@@ -68,10 +70,10 @@ private:
     }
 
     void TokenizeOperator() {
-        char current = char_source_.get();
+        char current = char_source_->get();
         std::string operator_str = std::string{current};
-        while (kOperatorTable.contains(operator_str + std::string{(char)char_source_.peek()})) {
-            operator_str += std::string{(char)char_source_.get()};
+        while (kOperatorTable.contains(operator_str + std::string{(char)char_source_->peek()})) {
+            operator_str += std::string{(char)char_source_->get()};
         }
         AddToken(kOperatorTable.at(operator_str));
     }
@@ -79,17 +81,23 @@ private:
     void TokenizeIdentifier() {
         std::string name;
         while (true) {
-            char current = char_source_.peek();
+            char current = char_source_->peek();
             if (!(IsDigit(current) || IsLetterOrLowLine(current))) {
                 break;
             }
-            name.push_back(current);
-            char_source_.get();
+            name += current;
+            char_source_->get();
         }
         if (kKeywordsTable.contains(name)) {
             return AddToken(kKeywordsTable.at(name));
         }
         AddToken(TokenType::kIdentifier, name);
+    }
+
+    void TokenizeString() {
+        std::string str;
+        char_source_->get(); // eat "
+        
     }
 
     void AddToken(TokenType type) {
@@ -116,7 +124,7 @@ private:
         );
     }
 
-    std::istream& char_source_;
+    std::unique_ptr<CharSource> char_source_;
     std::vector<Token> tokens;
     inline static const std::unordered_map<std::string, TokenType> kOperatorTable = {
         {"+",   TokenType::kPlus},

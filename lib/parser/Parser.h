@@ -9,6 +9,7 @@
 
 #include "AST/AST.h"
 #include "Token.h"
+#include "TokenSource.h"
 
 class Parser {
 public:
@@ -19,9 +20,8 @@ public:
     using token_and_assign      = std::pair<TokenType, AssignmentOperationType>;
     using assignment_table      = const std::vector<token_and_assign>;
 
-    Parser(std::vector<Token> tokens, VariablesTable& table, std::ostream& out)
+    Parser(std::unique_ptr<TokenSource> tokens, VariablesTable& table, std::ostream& out)
     : tokens_(std::move(tokens))
-    , position_(0)
     , variables_table_(table)
     , out_(out) {}
 
@@ -87,22 +87,24 @@ private:
 
     statement ParseScopeStatement() {
         std::unique_ptr<ScopeStatement> scope = std::make_unique<ScopeStatement>();
-        while (get().type() != TokenType::kElse && get().type() != TokenType::kEnd) {
+        while (Peek().Type() != TokenType::kElse && Peek().Type() != TokenType::kEnd) {
             scope->add(ParseStatement());
         }
         return scope;
     }
 
     statement ParseAssignStatement() {
-        for (auto& [token, assignment]: assignment_table_)
-            if (get().type() == TokenType::kIdentifier && get(1).type() == token) {
-                Token current = get();
+        for (auto& [token, assignment]: assignment_table_) {
+            // std::cerr << Peek().Type() << " " << Get(1).Type() << "\n";
+            if (Peek().Type() == TokenType::kIdentifier && Peek(1).Type() == token) {
+                Token current = Peek();
                 Match(TokenType::kIdentifier);
                 Check(token);
                 return std::make_unique<AssignStatement>(
-                    current.text(), ParseExpression(), variables_table_, assignment
+                    current.Text(), ParseExpression(), variables_table_, assignment
                 );
             }
+        }
         throw std::runtime_error("not now");
     }
 
@@ -181,11 +183,11 @@ private:
     }
 
     expression ParseLiteral() {
-        auto token = get();
+        auto token = Peek();
         // TODO: replace with the map
         if (Match(TokenType::kNumber)) {
             return std::make_unique<ConstExpressionAST>(
-                std::stod(token.text())
+                std::stod(token.Text())
             );
         }
         if (Match(TokenType::kTrue)) {
@@ -200,7 +202,7 @@ private:
         }
         if (Match(TokenType::kIdentifier)) {
             return std::make_unique<VariableExpression>(
-                token.text(), variables_table_
+                token.Text(), variables_table_
             );
         }
         if (Match(TokenType::kLParenthesis)) {
@@ -212,31 +214,22 @@ private:
     }
 
     bool Match(TokenType type) {
-        bool ans = (get().type() == type);
-        if (ans) {
-            ++position_;
-            return true;
-        }
-        return false;
+        return tokens_->Match(type);
     }
 
     void Check(TokenType type) {
-        if (!Match(type)) {
-            throw std::runtime_error("invalid syntax");
-        }
+        tokens_->Check(type);
     }
 
-    Token get(size_t additional = 0) {
-        if (position_ + additional > tokens_.size()) {
-            return Token(TokenType::kEOF, "");
-        }
-        return tokens_[position_ + additional];
+    const Token& Peek(size_t additional = 0) {
+        return tokens_->Peek(additional);
     }
 
-    size_t position_;
-    std::vector<Token> tokens_;
+    std::unique_ptr<TokenSource> tokens_;
     VariablesTable& variables_table_;
     std::ostream& out_;
+
+    // tables for translation from tokentype to operations
 
     static inline operators_table logical_or_table_ = {
          {TokenType::kLogicalOr, OperationType::kLogicalOr},
