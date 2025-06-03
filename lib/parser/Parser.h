@@ -20,10 +20,8 @@ public:
     using token_and_assign      = std::pair<TokenType, AssignmentOperationType>;
     using assignment_table      = const std::vector<token_and_assign>;
 
-    Parser(std::unique_ptr<TokenSource> tokens, VariablesTable& table, std::ostream& out)
-    : tokens_(std::move(tokens))
-    , variables_table_(table)
-    , out_(out) {}
+    Parser(std::unique_ptr<TokenSource> tokens)
+    : tokens_(std::move(tokens)) {}
 
     std::vector<statement> parse() {
         std::vector<statement> result;
@@ -45,7 +43,7 @@ private:
     statement ParsePrintStatement() {
         Check(TokenType::kLParenthesis);
         statement print = std::make_unique<PrintStatement>(
-            ParseExpression(), out_
+            ParseExpression()
         );
         Check(TokenType::kRParenthesis);
         return print;
@@ -54,7 +52,7 @@ private:
     statement ParsePrintlnStatement() {
         Check(TokenType::kLParenthesis);
         statement println = std::make_unique<PrintlnStatement>(
-            ParseExpression(), out_
+            ParseExpression()
         );
         Check(TokenType::kRParenthesis);
         return println;
@@ -101,7 +99,7 @@ private:
                 Match(TokenType::kIdentifier);
                 Check(token);
                 return std::make_unique<AssignStatement>(
-                    current.Text(), ParseExpression(), variables_table_, assignment
+                    current.Text(), ParseExpression(), assignment
                 );
             }
         }
@@ -202,7 +200,7 @@ private:
         }
         if (Match(TokenType::kIdentifier)) {
             return std::make_unique<VariableExpression>(
-                token.Text(), variables_table_
+                token.Text()
             );
         }
         if (Match(TokenType::kLParenthesis)) {
@@ -210,7 +208,7 @@ private:
             Check(TokenType::kRParenthesis);
             return expr;
         }
-        throw std::runtime_error("bye");
+        throw std::runtime_error("expected literal or number");
     }
 
     bool Match(TokenType type) {
@@ -226,8 +224,6 @@ private:
     }
 
     std::unique_ptr<TokenSource> tokens_;
-    VariablesTable& variables_table_;
-    std::ostream& out_;
 
     // tables for translation from tokentype to operations
 

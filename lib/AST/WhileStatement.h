@@ -12,9 +12,9 @@ public:
     : while_expr_(std::move(while_expr))
     , statement_(std::move(statement)) {}
 
-    void execute() {
-        while (while_expr_->evaluate()) {
-            statement_->execute();
+    void execute(Context& context) {
+        while (while_expr_->evaluate(context)) {
+            statement_->execute(context);
         }
     }
 

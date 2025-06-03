@@ -1,11 +1,13 @@
 #pragma once
 
+#include "executor/Context.h"
+
 class StatementAST {
 public:
-    virtual void execute() = 0;
+    virtual void execute(Context& context) = 0;
     virtual ~StatementAST() = default;
 };
 
 class EmptyStatement: public StatementAST {
-    void execute() override {}
+    void execute(Context& context) override {}
 };

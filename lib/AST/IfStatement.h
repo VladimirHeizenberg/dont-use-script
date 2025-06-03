@@ -13,11 +13,11 @@ public:
     , statement_true_(std::move(statement_true))
     , statement_false_(std::move(statement_false)) {}
 
-    void execute() override {
-        if (expr_->evaluate()) {
-            statement_true_->execute();
+    void execute(Context& context) override {
+        if (expr_->evaluate(context)) {
+            statement_true_->execute(context);
         } else {
-            statement_false_->execute();
+            statement_false_->execute(context);
         }
     }
 private:

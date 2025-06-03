@@ -3,34 +3,33 @@
 
 #include "lib/parser/Lexer.h"
 #include "lib/parser/Parser.h"
+#include "lib/executor/Executor.h"
 
 int main(int argc, char** argv) {
-    int a = 5;
     std::string code = R"(
         a = 2
         while a < 10
             println(a)
-            a += 1
             if a == 5 then
                 println(239)
             end if
+            a += 1
         end while
     )";
     std::stringstream ss(code);
-    Lexer lexer(ss);
+    std::unique_ptr<CharSource> source = std::make_unique<StreamCharSource>(ss);
+    Lexer lexer(std::move(source));
     VariablesTable table;
     auto res = lexer.tokenize();
-    // for (auto c : res) {
-    //     std::cout << c.text() << " " << c.type() << "\n";
-    // }
-    Parser parser(res, table, std::cout);
-    auto res2 = parser.parse();
-    for (auto& s : res2) s->execute();
-    // std::cout << table.Get("c") << "\n";
-    // std::cout << table.Get("d") << "\n";
-    // // std::cout << res2.size() << "\n";
-    // std::cout << res2[0]->evaluate();
-    // return 0;
-
-
+    std::unique_ptr<TokenSource> tokens = std::make_unique<VectorReferenceTokenSource>(res);
+    Parser parser(std::move(tokens));
+    std::unique_ptr<StatementSource> statement_source = std::make_unique<VectorStatementSource>(
+        parser.parse()
+    );
+    Executor executor(std::move(statement_source), ss, std::cout);
+    executor.Execute();
+    try {
+    } catch(std::runtime_error& e) {
+        std::cerr << e.what() << "\n";
+    }
 }

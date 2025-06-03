@@ -9,15 +9,13 @@
 
 class VariableExpression: public ExpressionAST {
 public:
-    VariableExpression(const std::string& name, VariablesTable& table)
-    : name_(name)
-    , table_(table) {}
+    VariableExpression(const std::string& name)
+    : name_(name) {}
 
-    Value evaluate() override {
-        if (!table_.Contains(name_)) throw std::runtime_error("Name '" + name_ + "' is not defined\n");
-        return table_.Get(name_);
+    Value evaluate(Context& context) override {
+        if (!context.table().Contains(name_)) throw std::runtime_error("Name '" + name_ + "' is not defined\n");
+        return context.table().Get(name_);
     }
 private:
     std::string name_;
-    VariablesTable& table_;
 };

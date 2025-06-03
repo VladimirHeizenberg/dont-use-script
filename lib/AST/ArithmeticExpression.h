@@ -27,7 +27,7 @@ public:
     ConstExpressionAST(const Value& value)
     : value_(value) {}
 
-    Value evaluate() override {
+    Value evaluate(Context& context) override {
         return value_;
     }
 private:
@@ -41,8 +41,8 @@ public:
     : operation_(operation)
     , expr_(std::move(expr)) {}
 
-    Value evaluate() override {
-        Value result = expr_->evaluate();
+    Value evaluate(Context& context) override {
+        Value result = expr_->evaluate(context);
         switch (operation_) {
         case OperationType::kNoOp:
             return result;
@@ -75,23 +75,23 @@ public:
     , lhs_(std::move(lhs))
     , rhs_(std::move(rhs)) {}
 
-    Value evaluate() override {
-        const Value lhs = lhs_->evaluate();
-        const Value rhs = rhs_->evaluate();
+    Value evaluate(Context& context) override {
+        const Value lhs = lhs_->evaluate(context);
+        const Value rhs = rhs_->evaluate(context);
         switch (operation_)
         {
-        case OperationType::kPlusOp: return lhs_->evaluate() + rhs_->evaluate();
-        case OperationType::kMinusOp: return lhs_->evaluate() - rhs_->evaluate();
-        case OperationType::kMulOp: return lhs_->evaluate() * rhs_->evaluate();
-        case OperationType::kDivOp: return lhs_->evaluate() / rhs_->evaluate();
-        case OperationType::kLogicalAnd: return lhs_->evaluate() & rhs_->evaluate();
-        case OperationType::kLogicalOr: return lhs_->evaluate() | rhs_->evaluate();
-        case OperationType::kLess: return lhs_->evaluate() < rhs_->evaluate();
-        case OperationType::kGreater: return lhs_->evaluate() > rhs_->evaluate();
-        case OperationType::kLessOrEqual: return lhs_->evaluate() <= rhs_->evaluate();
-        case OperationType::kGreaterOrEqual: return lhs_->evaluate() >= rhs_->evaluate();
-        case OperationType::kEqual: return lhs_->evaluate() == rhs_->evaluate();
-        case OperationType::kNotEqual: return lhs_->evaluate() != rhs_->evaluate();
+        case OperationType::kPlusOp: return lhs + rhs;
+        case OperationType::kMinusOp: return lhs - rhs;
+        case OperationType::kMulOp: return lhs * rhs;
+        case OperationType::kDivOp: return lhs / rhs;
+        case OperationType::kLogicalAnd: return lhs & rhs;
+        case OperationType::kLogicalOr: return lhs | rhs;
+        case OperationType::kLess: return lhs < rhs;
+        case OperationType::kGreater: return lhs > rhs;
+        case OperationType::kLessOrEqual: return lhs <= rhs;
+        case OperationType::kGreaterOrEqual: return lhs >= rhs;
+        case OperationType::kEqual: return lhs == rhs;
+        case OperationType::kNotEqual: return lhs != rhs;
         default: throw std::runtime_error("Unknow operation");
         }
     }

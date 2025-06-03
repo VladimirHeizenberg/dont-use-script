@@ -10,9 +10,9 @@ public:
         statements_.push_back(std::move(statement));
     }
 
-    void execute() override {
+    void execute(Context& context) override {
         for (auto& statement: statements_) {
-            statement->execute();
+            statement->execute(context);
         }
     }
 private:
