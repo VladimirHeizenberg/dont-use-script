@@ -16,12 +16,12 @@ public:
     Value(const Array& v) : value_(v) {}
 
     template<typename T>
-    bool Is() const {
+    [[nodiscard]] bool Is() const {
         return value_.type() == typeid(T);
     }
 
     template <typename T>
-    const T& As() const {
+    [[nodiscard]] const T& As() const {
         if (!Is<T>()) {
             throw std::runtime_error("Wrong types\n");
         }
@@ -34,7 +34,7 @@ public:
         return *this;
     }
 
-    operator bool() const {
+    [[nodiscard]] explicit operator bool() const {
         if (Is<bool>()) return As<bool>();
         if (Is<double>()) return As<double>() != 0;
         if (Is<Array>()) return As<Array>().empty();
@@ -45,7 +45,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Value& v) {
         if (v.Is<double>())      os << v.As<double>();
         else if (v.Is<bool>())   os << (v.As<bool>() ? "true" : "false");
-        else if (v.Is<std::string>()) os << "\"" << v.As<std::string>() << "\"";
+        else if (v.Is<std::string>()) os << v.As<std::string>();
         else if (v.Is<Array>()) {
             os << "[";
             for (const auto& c : v.As<Array>()) {
@@ -102,10 +102,10 @@ public:
         if (Is<std::string>() && rhs.Is<double>()) {
             Value result = *this;
             double repeat = rhs.As<double>();
-            int x = 0;
+            int x = 1;
             // TODO: add += so not too much memory to store new result every time
             while (x < repeat) {
-                result = result + result;
+                result = result + *this;
                 ++x;
             }
             return result;
@@ -113,10 +113,10 @@ public:
         if (Is<Array>() && rhs.Is<double>()) {
             Value result = *this;
             double repeat = rhs.As<double>();
-            int x = 0;
+            int x = 1;
             // TODO: add += so not too much memory to store new result every time
             while (x < repeat) {
-                result = result + result;
+                result = result + *this;
                 ++x;
             }
             return result;
@@ -149,7 +149,7 @@ public:
     }
 
     bool operator<=(const Value& rhs) const {
-        return !(rhs < *this);
+        return !(rhs > *this);
     }
 
     bool operator>=(const Value& rhs) const {

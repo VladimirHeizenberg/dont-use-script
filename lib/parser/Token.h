@@ -6,6 +6,7 @@ enum class TokenType {
     kIdentifier,
 
     kNumber,
+    kString,
 
     // keywords
     kPrint,
@@ -17,6 +18,7 @@ enum class TokenType {
     kElif,
     kElse,
     kWhile,
+    kLen,
     
     // operators
     kAssign, // =
@@ -47,7 +49,7 @@ enum class TokenType {
     kEOF,
 };
 
-std::ostream& operator<<(std::ostream& os, TokenType type) {
+inline std::ostream& operator<<(std::ostream& os, TokenType type) {
     switch (type) {
         case TokenType::kIdentifier:       return os << "kIdentifier";
         case TokenType::kNumber:           return os << "kNumber";
@@ -92,16 +94,16 @@ std::ostream& operator<<(std::ostream& os, TokenType type) {
 
 class Token {
 public:
-    Token() = default;
-    Token(TokenType type, const std::string& text)
+    Token() = delete;
+    Token(TokenType type, std::string text)
     : type_(type)
-    , text_(text) {}
+    , text_(std::move(text)) {}
 
-    TokenType Type() const {
+    [[nodiscard]] TokenType Type() const {
         return type_;
     }
 
-    const std::string& Text() const {
+    [[nodiscard]] const std::string& Text() const {
         return text_;
     }
 

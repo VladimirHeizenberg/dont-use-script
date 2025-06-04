@@ -8,7 +8,7 @@
 class StatementSource {
 public:
     virtual std::unique_ptr<StatementAST>& Get() = 0;
-    virtual bool eof() const = 0;
+    [[nodiscard]] virtual bool eof() const = 0;
     virtual ~StatementSource() = default;
 };
 
@@ -22,7 +22,7 @@ public:
         return statements_[index_++];
     }
 
-    bool eof() const override {
+    [[nodiscard]] bool eof() const override {
         return index_ == statements_.size();
     }
 private:

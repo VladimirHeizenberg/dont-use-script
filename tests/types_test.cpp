@@ -18,3 +18,21 @@ TEST(TypesTestSuite, IntTest) {
     ASSERT_TRUE(interpret(input, output));
     ASSERT_EQ(output.str(), expected);
 }
+
+TEST(TypesTestSuite, BoolTest) {
+    std::string code = R"(
+        x = 1
+        y = 2
+        z = 3 * x + y + true * 5
+        print(z)
+    )";
+
+    std::string expected = "10";
+
+    std::istringstream input(code);
+    std::ostringstream output;
+
+    ASSERT_TRUE(interpret(input, output));
+    ASSERT_EQ(output.str(), expected);
+}
+

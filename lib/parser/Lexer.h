@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <istream>
 #include <vector>
 #include <cctype>
 #include <unordered_map>
@@ -13,7 +12,7 @@
 
 class Lexer {
 public:
-    Lexer(std::unique_ptr<CharSource> char_source)
+    Lexer(std::unique_ptr<CharSource>&& char_source)
     : char_source_(std::move(char_source))
     , tokens(std::vector<Token>()) {}
 
@@ -52,7 +51,7 @@ private:
                 }
             }
             else if (
-                (current == '-' || current == '+') && 
+                (current == '-' || current == '+') &&
                 (*number.rbegin() == 'e' || *number.rbegin() == 'E')
                 ) {}
             else if (!IsDigit(current)) {
@@ -61,8 +60,8 @@ private:
             number.push_back(current);
             char_source_->get();
         }
-        if (number.back() == 'e' || number.back() == 'E' || 
-            number.back() == '+' || number.back() == '-' || 
+        if (number.back() == 'e' || number.back() == 'E' ||
+            number.back() == '+' || number.back() == '-' ||
             number.back() == '.') {
             throw std::runtime_error("Number ends abruptly: " + number);
         }
@@ -97,7 +96,11 @@ private:
     void TokenizeString() {
         std::string str;
         char_source_->get(); // eat "
-        
+        while (char_source_->peek() != '"') {
+            str += char_source_->get();
+        }
+        char_source_->get(); // eat "
+        AddToken(TokenType::kString, str);
     }
 
     void AddToken(TokenType type) {

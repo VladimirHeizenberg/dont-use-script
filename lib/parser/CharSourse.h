@@ -7,7 +7,7 @@ public:
     virtual ~CharSource() = default;
     virtual char peek() = 0;
     virtual char get() = 0;
-    virtual bool eof() const = 0;
+    [[nodiscard]] virtual bool eof() const = 0;
 };
 
 class StreamCharSource: public CharSource {
@@ -15,15 +15,15 @@ public:
     StreamCharSource(std::istream& stream)
     : stream_(stream) {}
 
-    char peek() {
+    char peek() override {
         return stream_.peek();
     }
 
-    char get() {
+    [[nodiscard]] char get() override {
         return stream_.get();
     }
 
-    bool eof() const {
+    [[nodiscard]] bool eof() const override {
         return stream_.eof();
     }
 private:

@@ -14,9 +14,9 @@ public:
     , output_(output)
     , table_(table) {}
 
-    std::istream& input() {return input_;}
-    std::ostream& output() {return output_;}
-    VariablesTable& table() {return table_;}
+    [[nodiscard]] std::istream& input() const {return input_;}
+    [[nodiscard]] std::ostream& output() const {return output_;}
+    [[nodiscard]] VariablesTable& table() const {return table_;}
     
 private:
     std::istream& input_;

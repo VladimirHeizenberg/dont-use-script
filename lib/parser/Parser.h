@@ -4,7 +4,6 @@
 #include <utility>
 #include <memory>
 #include <stdexcept>
-#include <unordered_map>
 #include <functional>
 
 #include "AST/AST.h"
@@ -35,7 +34,7 @@ private:
     statement ParseStatement() {
         if (Match(TokenType::kPrint)) return ParsePrintStatement();
         if (Match(TokenType::kPrintln)) return ParsePrintlnStatement();
-        if (Match(TokenType::kIf)) return ParseIfStatement();
+        if (Match(TokenType::kIf)) return ParseIfStatement(true);
         if (Match(TokenType::kWhile)) return ParseWhileStatement();
         return ParseAssignStatement();
     }
@@ -58,20 +57,26 @@ private:
         return println;
     }
 
-    statement ParseIfStatement() {
+    statement ParseIfStatement(bool flag) {
         expression if_expression = ParseExpression();
         Check(TokenType::kThen);
         statement statement_true = ParseScopeStatement();
         statement statement_false = std::make_unique<EmptyStatement>();
+        while (Match(TokenType::kElif)) {
+            statement_false = ParseIfStatement(false);
+        }
         if (Match(TokenType::kElse)) {
             statement_false = ParseScopeStatement();
         }
-        Check(TokenType::kEnd);
-        Check(TokenType::kIf);
+        if (flag) {
+            Check(TokenType::kEnd);
+            Check(TokenType::kIf);
+        }
         return std::make_unique<IfStatement>(
             std::move(if_expression), std::move(statement_true), std::move(statement_false)
         );
     }
+
 
     statement ParseWhileStatement() {
         expression while_expression = ParseExpression();
@@ -85,7 +90,9 @@ private:
 
     statement ParseScopeStatement() {
         std::unique_ptr<ScopeStatement> scope = std::make_unique<ScopeStatement>();
-        while (Peek().Type() != TokenType::kElse && Peek().Type() != TokenType::kEnd) {
+        while (Peek().Type() != TokenType::kElse &&
+               Peek().Type() != TokenType::kElif &&
+               Peek().Type() != TokenType::kEnd) {
             scope->add(ParseStatement());
         }
         return scope;
@@ -96,7 +103,7 @@ private:
             // std::cerr << Peek().Type() << " " << Get(1).Type() << "\n";
             if (Peek().Type() == TokenType::kIdentifier && Peek(1).Type() == token) {
                 Token current = Peek();
-                Match(TokenType::kIdentifier);
+                Check(TokenType::kIdentifier);
                 Check(token);
                 return std::make_unique<AssignStatement>(
                     current.Text(), ParseExpression(), assignment
@@ -188,6 +195,11 @@ private:
                 std::stod(token.Text())
             );
         }
+        if (Match(TokenType::kString)) {
+            return std::make_unique<ConstExpressionAST>(
+                token.Text()
+            );
+        }
         if (Match(TokenType::kTrue)) {
             return std::make_unique<ConstExpressionAST>(
                 Value(true)
@@ -211,21 +223,21 @@ private:
         throw std::runtime_error("expected literal or number");
     }
 
-    bool Match(TokenType type) {
+    [[nodiscard]] bool Match(TokenType type) const {
         return tokens_->Match(type);
     }
 
-    void Check(TokenType type) {
+    void Check(TokenType type) const {
         tokens_->Check(type);
     }
 
-    const Token& Peek(size_t additional = 0) {
+    [[nodiscard]] const Token& Peek(size_t additional = 0) const {
         return tokens_->Peek(additional);
     }
 
     std::unique_ptr<TokenSource> tokens_;
 
-    // tables for translation from tokentype to operations
+    // tables for translation from token type to operations
 
     static inline operators_table logical_or_table_ = {
          {TokenType::kLogicalOr, OperationType::kLogicalOr},

@@ -9,8 +9,8 @@
 
 class VariableExpression: public ExpressionAST {
 public:
-    VariableExpression(const std::string& name)
-    : name_(name) {}
+    VariableExpression(std::string name)
+    : name_(std::move(name)) {}
 
     Value evaluate(Context& context) override {
         if (!context.table().Contains(name_)) throw std::runtime_error("Name '" + name_ + "' is not defined\n");

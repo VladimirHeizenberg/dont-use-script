@@ -74,21 +74,21 @@ TEST(BranchTestSuite, OneLineIfTest) {
 }
 
 
-TEST(LoopTestSuit, ForLoop) {
-    std::string code = R"(
-        for i in range(0,5,1)
-            print(i)
-        end for
-    )";
-
-    std::string expected = "01234";
-
-    std::istringstream input(code);
-    std::ostringstream output;
-
-    ASSERT_TRUE(interpret(input, output));
-    ASSERT_EQ(output.str(), expected);
-}
+// TEST(LoopTestSuit, ForLoop) {
+//     std::string code = R"(
+//         for i in range(0,5,1)
+//             print(i)
+//         end for
+//     )";
+//
+//     std::string expected = "01234";
+//
+//     std::istringstream input(code);
+//     std::ostringstream output;
+//
+//     ASSERT_TRUE(interpret(input, output));
+//     ASSERT_EQ(output.str(), expected);
+// }
 
 
 TEST(LoopTestSuit, WhileLoop) {

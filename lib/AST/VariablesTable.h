@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 #include <string>
-#include <any>
 
 #include "Value.h"
 
@@ -12,11 +11,11 @@ public:
         variables[name] = value;
     }
 
-    const Value& Get(const std::string& name) {
+    const Value& Get(const std::string& name) const {
         return variables.at(name);
     }
 
-    bool Contains(const std::string& name) {
+    bool Contains(const std::string& name) const {
         return variables.contains(name);
     }
 private:

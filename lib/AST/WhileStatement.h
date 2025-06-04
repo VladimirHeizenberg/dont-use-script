@@ -12,7 +12,7 @@ public:
     : while_expr_(std::move(while_expr))
     , statement_(std::move(statement)) {}
 
-    void execute(Context& context) {
+    void execute(Context& context) override {
         while (while_expr_->evaluate(context)) {
             statement_->execute(context);
         }

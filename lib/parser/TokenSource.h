@@ -7,9 +7,10 @@
 
 class TokenSource {
 public:
-    virtual const Token& Peek(size_t additional = 0) = 0;
+    virtual const Token& Peek() = 0;
+    virtual const Token& Peek(size_t add) = 0;
     virtual const Token& Get() = 0;
-    virtual bool eof() const = 0;
+    [[nodiscard]] virtual bool eof() const = 0;
 
     virtual bool Match(TokenType type) {
         if (Peek().Type() == type) {
@@ -34,15 +35,19 @@ public:
     : tokens_(std::move(tokens))
     , index_(0) {}
 
-    const Token& Peek(size_t additional = 0) override {
-        return tokens_[index_ + additional];
+    const Token& Peek() override {
+        return tokens_[index_];
+    }
+
+    const Token& Peek(size_t add) override {
+        return tokens_[index_ + add];
     }
 
     const Token& Get() override {
         return tokens_[index_++];
     }
 
-    bool eof() const override {
+    [[nodiscard]] bool eof() const override {
         return index_ == tokens_.size();
     }
 private:
@@ -56,15 +61,19 @@ public:
     : tokens_(tokens)
     , index_(0) {}
 
-    const Token& Peek(size_t additional = 0) override {
-        return tokens_[index_ + additional];
+    const Token& Peek() override {
+        return tokens_[index_];
+    }
+
+    const Token& Peek(size_t add) override {
+        return tokens_[index_ + add];
     }
 
     const Token& Get() override {
         return tokens_[index_++];
     }
 
-    bool eof() const override {
+    [[nodiscard]] bool eof() const override {
         return index_ == tokens_.size();
     }
 private:

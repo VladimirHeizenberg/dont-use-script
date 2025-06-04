@@ -4,7 +4,7 @@
 #include <memory>
 #include <stdexcept>
 
-enum OperationType {
+enum class OperationType {
     kPlusOp,
     kMinusOp,
     kMulOp,
