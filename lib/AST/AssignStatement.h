@@ -15,7 +15,7 @@ enum class AssignmentOperationType {
     kDivAssign,
 };
 
-class AssignStatement: public StatementAST {
+class AssignStatement final: public StatementAST {
 public:
     AssignStatement(const std::string& name, 
                        std::unique_ptr<ExpressionAST> expr,

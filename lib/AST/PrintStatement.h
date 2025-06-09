@@ -6,7 +6,7 @@
 #include <memory>
 #include <iostream>
 
-class PrintStatement: public StatementAST {
+class PrintStatement final: public StatementAST {
 public:
     PrintStatement(std::unique_ptr<ExpressionAST> expr)
     : expr_(std::move(expr)) {}

@@ -8,6 +8,6 @@ public:
     virtual ~StatementAST() = default;
 };
 
-class EmptyStatement: public StatementAST {
+class EmptyStatement final: public StatementAST {
     void execute(Context& context) override {}
 };

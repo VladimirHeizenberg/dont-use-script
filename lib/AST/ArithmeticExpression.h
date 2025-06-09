@@ -22,10 +22,10 @@ enum class OperationType {
     kGreaterOrEqual,
 };
 
-class ConstExpressionAST : public ExpressionAST {
+class ConstExpressionAST final: public ExpressionAST {
 public:
-    ConstExpressionAST(const Value& value)
-    : value_(value) {}
+    ConstExpressionAST(Value value)
+    : value_(std::move(value)) {}
 
     Value evaluate(Context& context) override {
         return value_;
@@ -34,7 +34,7 @@ private:
     Value value_;
 };
 
-class UnaryExpressionAST : public ExpressionAST {
+class UnaryExpressionAST final: public ExpressionAST {
 public:
     UnaryExpressionAST(OperationType operation, 
                        std::unique_ptr<ExpressionAST> expr)
@@ -66,7 +66,7 @@ private:
     std::unique_ptr<ExpressionAST> expr_;
 };
 
-class BinaryExpressionAST : public ExpressionAST {
+class BinaryExpressionAST final: public ExpressionAST {
 public:
     BinaryExpressionAST(OperationType operation, 
                      std::unique_ptr<ExpressionAST> lhs, 

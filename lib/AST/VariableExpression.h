@@ -7,7 +7,7 @@
 #include "VariablesTable.h"
 #include "Value.h"
 
-class VariableExpression: public ExpressionAST {
+class VariableExpression final: public ExpressionAST {
 public:
     VariableExpression(std::string name)
     : name_(std::move(name)) {}

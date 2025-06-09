@@ -70,6 +70,14 @@ private:
 
     void TokenizeOperator() {
         char current = char_source_->get();
+        if (current == '/' && char_source_->peek() == '/') {
+            // comment (yes, it's not operator :) )
+            while (char_source_->peek() != '\n') {
+                char_source_->get();
+            }
+            char_source_->get();
+            return;
+        }
         std::string operator_str = std::string{current};
         while (kOperatorTable.contains(operator_str + std::string{(char)char_source_->peek()})) {
             operator_str += std::string{(char)char_source_->get()};

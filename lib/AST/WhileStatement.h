@@ -5,7 +5,7 @@
 #include "Value.h"
 
 
-class WhileStatement: public StatementAST {
+class WhileStatement final: public StatementAST {
 public:
     WhileStatement(std::unique_ptr<ExpressionAST> while_expr,
                    std::unique_ptr<StatementAST> statement)

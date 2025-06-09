@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-class ScopeStatement: public StatementAST {
+class ScopeStatement final: public StatementAST {
 public:
     void add(std::unique_ptr<StatementAST> statement) {
         statements_.push_back(std::move(statement));

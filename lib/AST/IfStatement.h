@@ -4,7 +4,7 @@
 #include "Expression.h"
 
 
-class IfStatement: public StatementAST {
+class IfStatement final: public StatementAST {
 public:
     IfStatement(std::unique_ptr<ExpressionAST> expr,
                 std::unique_ptr<StatementAST> statement_true,
