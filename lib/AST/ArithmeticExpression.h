@@ -24,14 +24,14 @@ enum class OperationType {
 
 class ConstExpressionAST final: public ExpressionAST {
 public:
-    ConstExpressionAST(Value value)
+    ConstExpressionAST(ValuePtr value)
     : value_(std::move(value)) {}
 
-    Value evaluate(Context& context) override {
+    ValuePtr evaluate(Context& context) override {
         return value_;
     }
 private:
-    Value value_;
+    ValuePtr value_;
 };
 
 class UnaryExpressionAST final: public ExpressionAST {
@@ -41,22 +41,22 @@ public:
     : operation_(operation)
     , expr_(std::move(expr)) {}
 
-    Value evaluate(Context& context) override {
-        Value result = expr_->evaluate(context);
+    ValuePtr evaluate(Context& context) override {
+        ValuePtr result = expr_->evaluate(context);
         switch (operation_) {
         case OperationType::kNoOp:
             return result;
         case OperationType::kPlusOp: 
-            if (result.Is<double>())
+            if (result->GetValueType() == ValueType::kDoubleValue)
                 return result;
             throw std::runtime_error("Wrong type for unary expression +\n");
         case OperationType::kMinusOp: 
-            if (result.Is<double>()) {
-                return -result.As<double>();
+            if (result->GetValueType() == ValueType::kDoubleValue) {
+                return std::make_shared<DoubleValue>(-result->AsDouble());
             }
             throw std::runtime_error("Wrong type for unary expression +\n");
-        case OperationType::kLogicalNot:
-            return !result;
+        // case OperationType::kLogicalNot:
+        //     return !result;
         default:
             throw std::runtime_error("Wrong unary operator");
         }
@@ -75,23 +75,23 @@ public:
     , lhs_(std::move(lhs))
     , rhs_(std::move(rhs)) {}
 
-    Value evaluate(Context& context) override {
-        const Value lhs = lhs_->evaluate(context);
-        const Value rhs = rhs_->evaluate(context);
+    ValuePtr evaluate(Context& context) override {
+        const ValuePtr lhs = lhs_->evaluate(context);
+        const ValuePtr rhs = rhs_->evaluate(context);
         switch (operation_)
         {
-        case OperationType::kPlusOp: return lhs + rhs;
-        case OperationType::kMinusOp: return lhs - rhs;
-        case OperationType::kMulOp: return lhs * rhs;
-        case OperationType::kDivOp: return lhs / rhs;
-        case OperationType::kLogicalAnd: return lhs & rhs;
-        case OperationType::kLogicalOr: return lhs | rhs;
-        case OperationType::kLess: return lhs < rhs;
-        case OperationType::kGreater: return lhs > rhs;
-        case OperationType::kLessOrEqual: return lhs <= rhs;
-        case OperationType::kGreaterOrEqual: return lhs >= rhs;
-        case OperationType::kEqual: return lhs == rhs;
-        case OperationType::kNotEqual: return lhs != rhs;
+        case OperationType::kPlusOp: return Add(lhs, rhs);
+        case OperationType::kMinusOp: return Subtract(lhs, rhs);
+        case OperationType::kMulOp: return Multiply(lhs, rhs);
+        case OperationType::kDivOp: return Divide(lhs, rhs);
+        // case OperationType::kLogicalAnd: return lhs & rhs;
+        // case OperationType::kLogicalOr: return lhs | rhs;
+        // case OperationType::kLess: return lhs < rhs;
+        // case OperationType::kGreater: return lhs > rhs;
+        // case OperationType::kLessOrEqual: return lhs <= rhs;
+        // case OperationType::kGreaterOrEqual: return lhs >= rhs;
+        // case OperationType::kEqual: return lhs == rhs;
+        // case OperationType::kNotEqual: return lhs != rhs;
         default: throw std::runtime_error("Unknow operation");
         }
     }

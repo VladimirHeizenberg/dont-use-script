@@ -5,14 +5,14 @@
 
 #include "Expression.h"
 #include "VariablesTable.h"
-#include "Value.h"
+#include "../Value/include/Value.h"
 
 class VariableExpression final: public ExpressionAST {
 public:
     VariableExpression(std::string name)
     : name_(std::move(name)) {}
 
-    Value evaluate(Context& context) override {
+    ValuePtr evaluate(Context& context) override {
         if (!context.table().Contains(name_)) throw std::runtime_error("Name '" + name_ + "' is not defined\n");
         return context.table().Get(name_);
     }

@@ -192,22 +192,22 @@ private:
         // TODO: replace with the map
         if (Match(TokenType::kNumber)) {
             return std::make_unique<ConstExpressionAST>(
-                std::stod(token.Text())
+                MakeDoubleValue(std::stod(token.Text()))
             );
         }
         if (Match(TokenType::kString)) {
             return std::make_unique<ConstExpressionAST>(
-                token.Text()
+                MakeStringValue(Token(token).Text())
             );
         }
         if (Match(TokenType::kTrue)) {
             return std::make_unique<ConstExpressionAST>(
-                Value(true)
+                MakeBoolValue(true)
             );
         }
         if (Match(TokenType::kFalse)) {
             return std::make_unique<ConstExpressionAST>(
-                Value(false)
+                MakeBoolValue(false)
             );
         }
         if (Match(TokenType::kIdentifier)) {

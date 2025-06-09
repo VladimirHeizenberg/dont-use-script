@@ -14,7 +14,7 @@ public:
     , statement_false_(std::move(statement_false)) {}
 
     void execute(Context& context) override {
-        if (expr_->evaluate(context)) {
+        if (expr_->evaluate(context)->AsBool()) {
             statement_true_->execute(context);
         } else {
             statement_false_->execute(context);

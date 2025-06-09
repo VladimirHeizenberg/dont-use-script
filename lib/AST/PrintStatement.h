@@ -12,7 +12,7 @@ public:
     : expr_(std::move(expr)) {}
 
     void execute(Context& context) override {
-        context.output() << expr_->evaluate(context);
+        context.output() << expr_->evaluate(context)->AsString();
     }
 private:
     std::unique_ptr<ExpressionAST> expr_;
@@ -25,7 +25,7 @@ public:
     : expr_(std::move(expr)) {}
 
     void execute(Context& context) override {
-        context.output() << expr_->evaluate(context) << std::endl;
+        context.output() << expr_->evaluate(context)->AsString() << std::endl;
     }
 private:
     std::unique_ptr<ExpressionAST> expr_;

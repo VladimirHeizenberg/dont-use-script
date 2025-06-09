@@ -3,15 +3,15 @@
 #include <unordered_map>
 #include <string>
 
-#include "Value.h"
+#include "../Value/include/Value.h"
 
 class VariablesTable {
 public:
-    void Set(const std::string& name, const Value& value) {
-        variables[name] = value;
+    void Set(const std::string& name, ValuePtr value) {
+        variables[name] = std::move(value);
     }
 
-    const Value& Get(const std::string& name) const {
+    const ValuePtr& Get(const std::string& name) const {
         return variables.at(name);
     }
 
@@ -19,5 +19,5 @@ public:
         return variables.contains(name);
     }
 private:
-    std::unordered_map<std::string, Value> variables;
+    std::unordered_map<std::string, ValuePtr> variables;
 };
