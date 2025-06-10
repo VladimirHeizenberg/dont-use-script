@@ -52,11 +52,11 @@ public:
             throw std::runtime_error("Wrong type for unary expression +\n");
         case OperationType::kMinusOp: 
             if (result->GetValueType() == ValueType::kDoubleValue) {
-                return std::make_shared<DoubleValue>(-result->AsDouble());
+                return MakeDoubleValue(-result->AsDouble());
             }
-            throw std::runtime_error("Wrong type for unary expression +\n");
-        // case OperationType::kLogicalNot:
-        //     return !result;
+            throw std::runtime_error("Wrong type for unary expression -\n");
+        case OperationType::kLogicalNot:
+            return LogicalNot(result);
         default:
             throw std::runtime_error("Wrong unary operator");
         }
@@ -84,15 +84,15 @@ public:
         case OperationType::kMinusOp: return Subtract(lhs, rhs);
         case OperationType::kMulOp: return Multiply(lhs, rhs);
         case OperationType::kDivOp: return Divide(lhs, rhs);
-        // case OperationType::kLogicalAnd: return lhs & rhs;
-        // case OperationType::kLogicalOr: return lhs | rhs;
-        // case OperationType::kLess: return lhs < rhs;
-        // case OperationType::kGreater: return lhs > rhs;
-        // case OperationType::kLessOrEqual: return lhs <= rhs;
-        // case OperationType::kGreaterOrEqual: return lhs >= rhs;
-        // case OperationType::kEqual: return lhs == rhs;
-        // case OperationType::kNotEqual: return lhs != rhs;
-        default: throw std::runtime_error("Unknow operation");
+        case OperationType::kLogicalAnd: return LogicalAnd(lhs, rhs);
+        case OperationType::kLogicalOr: return LogicalOr(lhs, rhs);
+        case OperationType::kLess: return Less(lhs, rhs);
+        case OperationType::kGreater: return Greater(lhs, rhs);
+        case OperationType::kLessOrEqual: return LessOrEqual(lhs, rhs);
+        case OperationType::kGreaterOrEqual: return GreaterOrEqual(lhs, rhs);
+        case OperationType::kEqual: return Equals(lhs, rhs);
+        case OperationType::kNotEqual: return NotEquals(lhs, rhs);
+        default: throw std::runtime_error("Unknown operation");
         }
     }
 

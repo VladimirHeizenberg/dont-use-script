@@ -3,6 +3,6 @@ add_library(
         source/StringValue.cpp
         source/DoubleValue.cpp
         source/BoolValue.cpp
-        source/BinaryOperations.cpp
+        source/Operations.cpp
         source/MakeValue.cpp
 )

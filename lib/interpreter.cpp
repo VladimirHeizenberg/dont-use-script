@@ -16,5 +16,5 @@ bool interpret(std::istream& input, std::ostream& output) {
     // } catch(...) {
     //     return false;
     // }
-    // return true;
+    return true;
 }

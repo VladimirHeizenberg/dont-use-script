@@ -1,16 +1,12 @@
-#include "../include/BinaryOperations.h"
+#include "../include/Operations.h"
 
 #include <stdexcept>
 #include <cmath>
 #include <functional>
 #include <map>
 
-#include "../include/BoolValue.h"
-#include "../include/DoubleValue.h"
-#include "../include/StringValue.h"
+#include "../include/ValueInterface.h"
 #include "../include/MakeValue.h"
-
-// Tables
 
 using OperandsType = std::pair<ValueType, ValueType>;
 using Function = std::function<ValuePtr(const ValuePtr&, const ValuePtr&)>;
@@ -33,13 +29,25 @@ ValuePtr DivideDoubles(const ValuePtr& left, const ValuePtr& right) {
 
 ValuePtr RemainderDoubles(const ValuePtr& left, const ValuePtr& right) {
     return MakeDoubleValue(
-        static_cast<long long>(left->AsDouble()) % static_cast<long long>(right->AsDouble())
+        static_cast<double>(
+            static_cast<long long>(left->AsDouble()) % static_cast<long long>(right->AsDouble())
+        )
     );
 }
 
 ValuePtr PowDoubles(const ValuePtr& left, const ValuePtr& right) {
     return MakeDoubleValue(std::pow(left->AsDouble(), right->AsDouble()));
 }
+
+ValuePtr EqualsDoubles(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(left->AsDouble() == right->AsDouble());
+}
+
+ValuePtr LessDoubles(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(left->AsDouble() < right->AsDouble());
+}
+
+// Tables
 
 static const std::map<OperandsType, Function> AddTable = {
     {{ValueType::kDoubleValue, ValueType::kDoubleValue},&AddDoubles},
@@ -62,8 +70,9 @@ static const std::map<OperandsType, Function> SubtractTable = {
     {
         {ValueType::kStringValue, ValueType::kStringValue},
         [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
-            // TODO: implement
-            return MakeStringValue(left->AsString() + right->AsString());
+            if (left->AsString().ends_with(right->AsString())) {
+                return MakeStringValue(left->AsString() + right->AsString());
+            }
         }
     },
 };
@@ -103,18 +112,43 @@ static const std::map<OperandsType, Function> DivideTable = {
     {{ValueType::kDoubleValue, ValueType::kBoolValue},   &DivideDoubles},
 };
 
-static const std::map<OperandsType, Function> RemainderTable {
+static const std::map<OperandsType, Function> RemainderTable = {
     {{ValueType::kDoubleValue, ValueType::kDoubleValue}, &RemainderDoubles},
     {{ValueType::kBoolValue, ValueType::kDoubleValue},   &RemainderDoubles},
     {{ValueType::kDoubleValue, ValueType::kBoolValue},   &RemainderDoubles},
 };
 
-static const std::map<OperandsType, Function> PowTable {
+static const std::map<OperandsType, Function> PowTable = {
     {{ValueType::kDoubleValue, ValueType::kDoubleValue}, &PowDoubles},
     {{ValueType::kBoolValue, ValueType::kDoubleValue},   &PowDoubles},
     {{ValueType::kDoubleValue, ValueType::kBoolValue},   &PowDoubles},
 };
 
+static const std::map<OperandsType, Function> EqualsTable = {
+    {{ValueType::kDoubleValue, ValueType::kDoubleValue}, &EqualsDoubles},
+    {{ValueType::kBoolValue, ValueType::kDoubleValue},   &EqualsDoubles},
+    {{ValueType::kDoubleValue, ValueType::kBoolValue},   &EqualsDoubles},
+    {
+        {ValueType::kStringValue, ValueType::kStringValue},
+        [](const ValuePtr& left, const ValuePtr& right) {
+            return MakeBoolValue(left->AsString() == right->AsString());
+        }
+    }
+};
+
+static const std::map<OperandsType, Function> LessTable = {
+    {{ValueType::kDoubleValue, ValueType::kDoubleValue}, &LessDoubles},
+    {{ValueType::kBoolValue, ValueType::kDoubleValue},   &LessDoubles},
+    {{ValueType::kDoubleValue, ValueType::kBoolValue},   &LessDoubles},
+    {
+        {ValueType::kStringValue, ValueType::kStringValue},
+        [](const ValuePtr& left, const ValuePtr& right) {
+            return MakeBoolValue(left->AsString() < right->AsString());
+        }
+    }
+};
+
+// Aliases
 
 ValuePtr BinaryOperation(const ValuePtr& left, const ValuePtr& right,
                          const std::map<OperandsType, Function>& table) {
@@ -148,4 +182,40 @@ ValuePtr Remainder(const ValuePtr& left, const ValuePtr& right) {
 
 ValuePtr Power(const ValuePtr& left, const ValuePtr& right) {
     return BinaryOperation(left, right, PowTable);
+}
+
+ValuePtr Equals(const ValuePtr& left, const ValuePtr& right) {
+    return BinaryOperation(left, right, EqualsTable);
+}
+
+ValuePtr NotEquals(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(!Equals(left, right)->AsBool());
+}
+
+ValuePtr Less(const ValuePtr& left, const ValuePtr& right) {
+    return BinaryOperation(left, right, LessTable);
+}
+
+ValuePtr LessOrEqual(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(Less(left, right)->AsBool() | Equals(left, right)->AsBool());
+}
+
+ValuePtr Greater(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(!LessOrEqual(left, right)->AsBool());
+}
+
+ValuePtr GreaterOrEqual(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(!Less(left, right)->AsBool());
+}
+
+ValuePtr LogicalAnd(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(left->AsBool() & right ->AsBool());
+}
+
+ValuePtr LogicalOr(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(left->AsBool() | right->AsBool());
+}
+
+ValuePtr LogicalNot(const ValuePtr& left) {
+    return MakeBoolValue(!left->AsBool());
 }

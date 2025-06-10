@@ -8,10 +8,15 @@
 int main(int argc, char** argv) {
     std::string code = R"(
         v = 100 * 2 + 10 * 3 + 9
-        println(v)
-        println("Hello")
-        println(true)
-        println(1 + 2 + true + false + true * 239)
+        if v == 30 then
+            print(30)
+        elif v >= 366 then
+            print(366)
+        elif v <= 239 and 2 == 2 then
+            print(239)
+        else
+            print(0)
+        end if
     )";
     std::stringstream ss(code);
     std::unique_ptr<CharSource> source = std::make_unique<StreamCharSource>(ss);
