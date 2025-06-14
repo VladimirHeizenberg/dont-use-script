@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "Token.h"
-#include "AST/AST.h"
+#include "../AST/AST.h"
 #include "CharSourse.h"
 
 class Lexer {
@@ -17,13 +17,18 @@ public:
     , tokens(std::vector<Token>()) {}
 
     std::vector<Token> tokenize() {
+        tokens.clear();
         while(!char_source_->eof()) {
             char current = char_source_->peek();
             if (IsDigit(current) || current == '.') TokenizeNumber();
             else if (IsOperator(current) || current == '!') TokenizeOperator();
             else if (IsLetterOrLowLine(current)) TokenizeIdentifier();
             else if (current == '"') TokenizeString();
-            else char_source_->get(); // skip
+            else if (std::isspace(current)) char_source_->get(); // skip
+            else if (!char_source_->eof()) {
+                std:: cout << char_source_->eof();
+                throw std::runtime_error("Lexer: unexpected token: " + std::string(1, current));
+            }
         }
         AddToken(TokenType::kEOF);
         return std::move(tokens);
@@ -87,8 +92,9 @@ private:
 
     void TokenizeIdentifier() {
         std::string name;
+        char current;
         while (true) {
-            char current = char_source_->peek();
+            current = char_source_->peek();
             if (!(IsDigit(current) || IsLetterOrLowLine(current))) {
                 break;
             }
@@ -142,7 +148,10 @@ private:
         {"-",   TokenType::kMinus},
         {"*",   TokenType::kMul},
         {"/",   TokenType::kDiv},
+        {"%",   TokenType::kRemainder},
+        {"^",   TokenType::kPower},
         {"=",   TokenType::kAssign},
+        {",",   TokenType::kComma},
         {"+=",  TokenType::kPlusAssign},
         {"-=",  TokenType::kMinusAssign},
         {"*=",  TokenType::kMulAssign},
@@ -158,21 +167,27 @@ private:
     };
 
     inline static const std::unordered_map<std::string, TokenType> kKeywordsTable = {
-        {"print",   TokenType::kPrint},
-        {"println", TokenType::kPrintln},
-        {"true",    TokenType::kTrue},
-        {"false",   TokenType::kFalse},
-        {"if",      TokenType::kIf},
-        {"elif",    TokenType::kElif},
-        {"then",    TokenType::kThen},
-        {"else",    TokenType::kElse},
-        {"end",     TokenType::kEnd},
+        {"print",    TokenType::kPrint},
+        {"println",  TokenType::kPrintln},
+        {"true",     TokenType::kTrue},
+        {"false",    TokenType::kFalse},
+        {"if",       TokenType::kIf},
+        {"elif",     TokenType::kElif},
+        {"then",     TokenType::kThen},
+        {"else",     TokenType::kElse},
 
-        {"while",   TokenType::kWhile},
+        {"while",    TokenType::kWhile},
+        {"break",    TokenType::kBreak},
+        {"continue", TokenType::kContinue},
 
-        // special words still this is operators
-        {"and",     TokenType::kLogicalAnd},
-        {"or",      TokenType::kLogicalOr},
-        {"not",     TokenType::kLogicalNot},
+        {"function", TokenType::kFunction},
+        {"return",   TokenType::kReturn},
+
+        {"end",      TokenType::kEnd},
+
+        // keywords but operators
+        {"and",      TokenType::kLogicalAnd},
+        {"or",       TokenType::kLogicalOr},
+        {"not",      TokenType::kLogicalNot},
     };
 };

@@ -10,10 +10,14 @@ public:
         statements_.push_back(std::move(statement));
     }
 
-    void execute(Context& context) override {
+    StatementResultProxy execute(Context& context) override {
         for (auto& statement: statements_) {
-            statement->execute(context);
+            StatementResultProxy tmp_result = statement->execute(context);
+            if (tmp_result.result != StatementResult::kNormal) {
+                return tmp_result;
+            }
         }
+        return normal_result();
     }
 private:
     std::vector<std::unique_ptr<StatementAST>> statements_;

@@ -1,22 +1,20 @@
 #include <iostream>
 #include <sstream>
 
-#include "lib/parser/Lexer.h"
-#include "lib/parser/Parser.h"
+#include "../lib/parser/Lexer.h"
+#include "../lib/parser/Parser.h"
 #include "lib/executor/Executor.h"
 
 int main(int argc, char** argv) {
     std::string code = R"(
-        v = 100 * 2 + 10 * 3 + 9
-        if v == 30 then
-            print(30)
-        elif v >= 366 then
-            print(366)
-        elif v <= 239 and 2 == 2 then
-            print(239)
-        else
-            print(0)
-        end if
+        foo = function(a, b)
+            return a + b
+        end function
+
+        c = foo(4 + (2 * 3), 4 - (2 * 3)) * 5 + 10
+        println(c)
+
+        foo(1, 2)
     )";
     std::stringstream ss(code);
     std::unique_ptr<CharSource> source = std::make_unique<StreamCharSource>(ss);

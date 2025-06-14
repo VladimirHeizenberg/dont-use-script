@@ -11,8 +11,9 @@ public:
     PrintStatement(std::unique_ptr<ExpressionAST> expr)
     : expr_(std::move(expr)) {}
 
-    void execute(Context& context) override {
+    StatementResultProxy execute(Context& context) override {
         context.output() << expr_->evaluate(context)->AsString();
+        return normal_result();
     }
 private:
     std::unique_ptr<ExpressionAST> expr_;
@@ -24,8 +25,9 @@ public:
     PrintlnStatement(std::unique_ptr<ExpressionAST> expr)
     : expr_(std::move(expr)) {}
 
-    void execute(Context& context) override {
+    StatementResultProxy execute(Context& context) override {
         context.output() << expr_->evaluate(context)->AsString() << std::endl;
+        return normal_result();
     }
 private:
     std::unique_ptr<ExpressionAST> expr_;

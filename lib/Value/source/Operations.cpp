@@ -4,6 +4,7 @@
 #include <cmath>
 #include <functional>
 #include <map>
+#include <format>
 
 #include "../include/ValueInterface.h"
 #include "../include/MakeValue.h"
@@ -86,6 +87,7 @@ static const std::map<OperandsType, Function> MultiplyTable = {
         {ValueType::kStringValue, ValueType::kDoubleValue},
         [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
             std::string result;
+            // TODO: REDO
             result.reserve(left->AsString().size() * static_cast<size_t>(right->AsDouble()));
             for (int i = 0; i < right->AsDouble(); ++i) {
                 result += left->AsString();
@@ -104,6 +106,28 @@ static const std::map<OperandsType, Function> MultiplyTable = {
             return MakeStringValue(result);
         }
     },
+{
+            {ValueType::kStringValue, ValueType::kBoolValue},
+            [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
+                std::string result;
+                result.reserve(left->AsString().size() * static_cast<size_t>(right->AsDouble()));
+                for (int i = 0; i < right->AsDouble(); ++i) {
+                    result += left->AsString();
+                }
+                return MakeStringValue(result);
+            }
+},
+{
+            {ValueType::kBoolValue, ValueType::kStringValue},
+            [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
+                std::string result;
+                result.reserve(right->AsString().size() * static_cast<size_t>(left->AsDouble()));
+                for (int i = 0; i < left->AsDouble(); ++i) {
+                    result += right->AsString();
+                }
+                return MakeStringValue(result);
+            }
+},
 };
 
 static const std::map<OperandsType, Function> DivideTable = {
@@ -155,7 +179,7 @@ ValuePtr BinaryOperation(const ValuePtr& left, const ValuePtr& right,
     ValueType left_type = left->GetValueType();
     ValueType right_type = right->GetValueType();
     if (!table.contains({left_type, right_type})) {
-        throw std::runtime_error("Wrong operands");
+        throw std::runtime_error(std::format("Wrong operands: {} and {}", type_to_string(left_type), type_to_string(right_type)));
     }
     return table.at({left_type, right_type})(left, right);
 }

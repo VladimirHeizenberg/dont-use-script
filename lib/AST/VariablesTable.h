@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <string>
 
-#include "../Value/include/Value.h"
+#include "../Value/include/ValueDeclaration.h"
 
 class VariablesTable {
 public:
@@ -20,4 +20,5 @@ public:
     }
 private:
     std::unordered_map<std::string, ValuePtr> variables;
+
 };

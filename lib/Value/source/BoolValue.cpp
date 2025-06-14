@@ -5,7 +5,8 @@
 
 
 BoolValue::BoolValue(bool value)
-    : value_(value) {}
+    : value_(value)
+    , str_value_(value ? "true" : "false") {}
 
 ValueType BoolValue::GetValueType() const {
     return ValueType::kBoolValue;
@@ -19,10 +20,14 @@ double BoolValue::AsDouble() const {
     return value_ ? 1 : 0;
 }
 
-std::string BoolValue::AsString() const {
-    return value_ ? "true" : "false";
+const std::string& BoolValue::AsString() const {
+    return str_value_;
 }
 
-std::vector<std::unique_ptr<Value>> BoolValue::AsArray() const {
+const std::vector<std::unique_ptr<Value>>& BoolValue::AsArray() const {
     throw std::runtime_error("Bool cannot be used as array");
+}
+
+ValuePtr BoolValue::AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) const {
+    throw std::runtime_error("Bool cannot be used as function call");
 }

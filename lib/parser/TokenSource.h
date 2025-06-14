@@ -12,7 +12,7 @@ public:
     virtual const Token& Get() = 0;
     [[nodiscard]] virtual bool eof() const = 0;
 
-    virtual bool Match(TokenType type) {
+    bool Match(TokenType type) {
         if (Peek().Type() == type) {
             Get();
             return true;
@@ -20,9 +20,9 @@ public:
         return false;
     }
 
-    virtual void Check(TokenType type) {
+    void Check(TokenType type) {
         if (!Match(type)) {
-            throw std::runtime_error("Expected token of type");
+            throw std::runtime_error("Expected token " + token_to_string(type));
         }
     }
 

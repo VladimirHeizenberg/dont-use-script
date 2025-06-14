@@ -1,21 +1,23 @@
 #pragma once
 
 #include "ValueInterface.h"
-#include <string>
-#include <vector>
-#include <memory>
 
-class StringValue final : public Value {
+#include "../../AST/Statement.h"
+#include "../../executor/Context.h"
+
+class FunctionValue final: public Value {
 public:
-    explicit StringValue(const std::string& value);
+    FunctionValue(std::unique_ptr<StatementAST> function_body,
+                  std::vector<std::string> arguments);
 
     [[nodiscard]] ValueType GetValueType() const override;
+    [[nodiscard]] double AsDouble() const override;
     [[nodiscard]] bool AsBool() const override;
     [[nodiscard]] const std::string& AsString() const override;
     [[nodiscard]] const std::vector<std::unique_ptr<Value>>& AsArray() const override;
-    [[nodiscard]] double AsDouble() const override;
     [[nodiscard]] ValuePtr AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) const override;
 
 private:
-    std::string value_;
+    std::unique_ptr<StatementAST> scope_;
+    std::vector<std::string> arguments_;
 };

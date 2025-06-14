@@ -5,4 +5,5 @@ add_library(
         source/BoolValue.cpp
         source/Operations.cpp
         source/MakeValue.cpp
+        source/FunctionValue.cpp
 )

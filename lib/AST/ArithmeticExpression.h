@@ -9,6 +9,8 @@ enum class OperationType {
     kMinusOp,
     kMulOp,
     kDivOp,
+    kRemainderOp,
+    kPowerOp,
     kNoOp,
 
     kLogicalAnd,
@@ -84,6 +86,7 @@ public:
         case OperationType::kMinusOp: return Subtract(lhs, rhs);
         case OperationType::kMulOp: return Multiply(lhs, rhs);
         case OperationType::kDivOp: return Divide(lhs, rhs);
+        case OperationType::kRemainderOp: return Remainder(lhs, rhs);
         case OperationType::kLogicalAnd: return LogicalAnd(lhs, rhs);
         case OperationType::kLogicalOr: return LogicalOr(lhs, rhs);
         case OperationType::kLess: return Less(lhs, rhs);

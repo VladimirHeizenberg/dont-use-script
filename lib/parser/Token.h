@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
+
 
 enum class TokenType {
     kIdentifier,
@@ -18,14 +20,19 @@ enum class TokenType {
     kElif,
     kElse,
     kWhile,
-    kLen,
-    
+    kBreak,
+    kContinue,
+    kFunction,
+    kReturn,
+
     // operators
     kAssign, // =
     kPlus, // +
     kMinus, // -
     kMul, // *
     kDiv, // /
+    kRemainder, // %
+    kPower, // ^
     kPlusAssign, // +=
     kMinusAssign, // -=
     kMulAssign, // *=
@@ -36,58 +43,78 @@ enum class TokenType {
     kGreater, // >
     kLessOrEqual, // <=
     kGreaterOrEqual, // >=
-    kLogicalAnd,
-    kLogicalOr,
-    kLogicalNot,
+    kLogicalAnd, // and
+    kLogicalOr, // or
+    kLogicalNot, // not
 
-    
 
+    // Punctuation
     kLParenthesis, // (
     kRParenthesis, // )
+    kComma, // ,
 
     kEnd,
     kEOF,
 };
 
-inline std::ostream& operator<<(std::ostream& os, TokenType type) {
-    switch (type) {
-        case TokenType::kIdentifier:       return os << "kIdentifier";
-        case TokenType::kNumber:           return os << "kNumber";
+
+std::string token_to_string(TokenType token) {
+    static const std::unordered_map<TokenType, std::string> token_map = {
+        {TokenType::kIdentifier, "identifier"},
+        {TokenType::kNumber, "number"},
+        {TokenType::kString, "string"},
 
         // keywords
-        case TokenType::kPrint:            return os << "kPrint";
-        case TokenType::kPrintln:          return os << "kPrintln";
-        case TokenType::kTrue:             return os << "kTrue";
-        case TokenType::kFalse:            return os << "kFalse";
-        case TokenType::kIf:               return os << "kIf";
-        case TokenType::kThen:             return os << "kThen";
-        case TokenType::kElse:             return os << "kElse";
+        {TokenType::kPrint, "print"},
+        {TokenType::kPrintln, "println"},
+        {TokenType::kTrue, "true"},
+        {TokenType::kFalse, "false"},
+        {TokenType::kIf, "if"},
+        {TokenType::kThen, "then"},
+        {TokenType::kElif, "elif"},
+        {TokenType::kElse, "else"},
+        {TokenType::kWhile, "while"},
+        {TokenType::kBreak, "break"},
+        {TokenType::kContinue, "continue"},
+        {TokenType::kFunction, "function"},
+        {TokenType::kReturn, "return"},
 
-        // operators
-        case TokenType::kAssign:           return os << "kAssign";
-        case TokenType::kPlus:             return os << "kPlus";
-        case TokenType::kMinus:            return os << "kMinus";
-        case TokenType::kMul:              return os << "kMul";
-        case TokenType::kDiv:              return os << "kDiv";
-        case TokenType::kEqual:            return os << "kEqual";
-        case TokenType::kNotEqual:         return os << "kNotEqual";
-        case TokenType::kLess:             return os << "kLess";
-        case TokenType::kGreater:          return os << "kGreater";
-        case TokenType::kLessOrEqual:      return os << "kLessOrEqual";
-        case TokenType::kGreaterOrEqual:   return os << "kGreaterOrEqual";
+        // operators (use symbol from comments)
+        {TokenType::kAssign, "="},
+        {TokenType::kPlus, "+"},
+        {TokenType::kMinus, "-"},
+        {TokenType::kMul, "*"},
+        {TokenType::kDiv, "/"},
+        {TokenType::kRemainder, "%"},
+        {TokenType::kPower, "^"},
+        {TokenType::kPlusAssign, "+="},
+        {TokenType::kMinusAssign, "-="},
+        {TokenType::kMulAssign, "*="},
+        {TokenType::kDivAssign, "/="},
+        {TokenType::kEqual, "=="},
+        {TokenType::kNotEqual, "!="},
+        {TokenType::kLess, "<"},
+        {TokenType::kGreater, ">"},
+        {TokenType::kLessOrEqual, "<="},
+        {TokenType::kGreaterOrEqual, ">="},
+        {TokenType::kLogicalAnd, "and"},
+        {TokenType::kLogicalOr, "or"},
+        {TokenType::kLogicalNot, "not"},
 
-        case TokenType::kLogicalAnd:       return os << "kLogicalAnd";
-        case TokenType::kLogicalOr:        return os << "kLogicalOr";
-        case TokenType::kLogicalNot:       return os << "kLogicalNot";
+        // punctuation
+        {TokenType::kLParenthesis, "("},
+        {TokenType::kRParenthesis, ")"},
+        {TokenType::kComma, ","},
 
-        case TokenType::kLParenthesis:     return os << "kLParenthesis";
-        case TokenType::kRParenthesis:     return os << "kRParenthesis";
+        {TokenType::kEnd, "end"},
+        {TokenType::kEOF, "eof"},
+    };
 
-        case TokenType::kEnd:              return os << "kEnd";
-        case TokenType::kEOF:              return os << "kEOF";
-
-        default:                           return os << "Unknown TokenType";
+    auto it = token_map.find(token);
+    if (it != token_map.end()) {
+        return it->second;
     }
+    return "unknown";
 }
 
 

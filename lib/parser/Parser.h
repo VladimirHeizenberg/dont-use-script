@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 #include <functional>
+#include <set>
 
 #include "AST/AST.h"
 #include "Token.h"
@@ -31,11 +32,22 @@ public:
     }
 private:
 
-    statement ParseStatement() {
+    statement ParseStatement(bool parsing_function_flag = false) {
         if (Match(TokenType::kPrint)) return ParsePrintStatement();
         if (Match(TokenType::kPrintln)) return ParsePrintlnStatement();
         if (Match(TokenType::kIf)) return ParseIfStatement(true);
         if (Match(TokenType::kWhile)) return ParseWhileStatement();
+        if (Match(TokenType::kReturn)) {
+            if (!parsing_function_flag) {
+                throw std::runtime_error("return outside function");
+            }
+            return ParseReturnStatement();
+        }
+        if (Match(TokenType::kBreak)) return std::make_unique<BreakStatement>();
+        if (Match(TokenType::kContinue)) return std::make_unique<ContinueStatement>();
+        if (Peek().Type() == TokenType::kIdentifier && Peek(1).Type() == TokenType::kLParenthesis) {
+            return std::make_unique<FunctionCallStatement>(ParseLiteral());
+        }
         return ParseAssignStatement();
     }
 
@@ -60,13 +72,17 @@ private:
     statement ParseIfStatement(bool flag) {
         expression if_expression = ParseExpression();
         Check(TokenType::kThen);
-        statement statement_true = ParseScopeStatement();
+        statement statement_true = ParseScopeStatement(
+            {TokenType::kEnd, TokenType::kElif, TokenType::kElse}
+        );
         statement statement_false = std::make_unique<EmptyStatement>();
         while (Match(TokenType::kElif)) {
             statement_false = ParseIfStatement(false);
         }
         if (Match(TokenType::kElse)) {
-            statement_false = ParseScopeStatement();
+            statement_false = ParseScopeStatement(
+                {TokenType::kEnd, TokenType::kElif, TokenType::kElse}
+            );
         }
         if (flag) {
             Check(TokenType::kEnd);
@@ -80,7 +96,7 @@ private:
 
     statement ParseWhileStatement() {
         expression while_expression = ParseExpression();
-        statement while_statement = ParseScopeStatement();
+        statement while_statement = ParseScopeStatement({TokenType::kEnd});
         Check(TokenType::kEnd);
         Check(TokenType::kWhile);
         return std::make_unique<WhileStatement>(
@@ -88,12 +104,11 @@ private:
         );
     }
 
-    statement ParseScopeStatement() {
+    statement ParseScopeStatement(const std::set<TokenType>& stop_words,
+                                  bool parsing_function_flag = false) {
         std::unique_ptr<ScopeStatement> scope = std::make_unique<ScopeStatement>();
-        while (Peek().Type() != TokenType::kElse &&
-               Peek().Type() != TokenType::kElif &&
-               Peek().Type() != TokenType::kEnd) {
-            scope->add(ParseStatement());
+        while (!stop_words.contains(Peek().Type())) {
+            scope->add(ParseStatement(parsing_function_flag));
         }
         return scope;
     }
@@ -111,6 +126,10 @@ private:
             }
         }
         throw std::runtime_error("not now");
+    }
+
+    statement ParseReturnStatement() {
+        return std::make_unique<ReturnStatement>(ParseExpression());
     }
 
     template <typename NextPriority>
@@ -211,6 +230,9 @@ private:
             );
         }
         if (Match(TokenType::kIdentifier)) {
+            if (Match(TokenType::kLParenthesis)) {
+                return ParseFunctionCall(token.Text());
+            }
             return std::make_unique<VariableExpression>(
                 token.Text()
             );
@@ -220,7 +242,43 @@ private:
             Check(TokenType::kRParenthesis);
             return expr;
         }
+        if (Match(TokenType::kFunction)) {
+            return ParseFunctionDeclaration();
+        }
         throw std::runtime_error("expected literal or number");
+    }
+
+    expression ParseFunctionCall(const std::string& name) {
+        std::vector<expression> arguments;
+        while (Peek().Type() != TokenType::kRParenthesis) {
+            arguments.push_back(ParseExpression());
+            if (!Match(TokenType::kComma)) {
+                break;
+            }
+        }
+        Check(TokenType::kRParenthesis);
+        return std::make_unique<FunctionCallExpression>(name, std::move(arguments));
+    }
+
+    expression ParseFunctionDeclaration() {
+        Check(TokenType::kLParenthesis);
+        std::vector<std::string> arguments;
+        while (Peek().Type() == TokenType::kIdentifier) {
+            arguments.push_back(Peek().Text());
+            Check(TokenType::kIdentifier);
+            if (!Match(TokenType::kComma)) {
+                break;
+            }
+        }
+        Check(TokenType::kRParenthesis);
+        statement body = ParseScopeStatement({TokenType::kEnd}, true);
+        for (const auto& argument : arguments) {
+            std::cout << argument << " ";
+        }
+        std::cout << std::endl;
+        Check(TokenType::kEnd);
+        Check(TokenType::kFunction);
+        return std::make_unique<ConstExpressionAST>(MakeFunctionValue(std::move(body), std::move(arguments)));
     }
 
     [[nodiscard]] bool Match(TokenType type) const {
@@ -265,8 +323,13 @@ private:
     };
 
     static inline operators_table mult_table_ = {
-        {TokenType::kMul, OperationType::kMulOp},
-        {TokenType::kDiv, OperationType::kDivOp},
+        {TokenType::kMul,       OperationType::kMulOp},
+        {TokenType::kDiv,       OperationType::kDivOp},
+        {TokenType::kRemainder, OperationType::kRemainderOp},
+    };
+
+    static inline operators_table power_table_ = {
+        {TokenType::kPower, OperationType::kPowerOp},
     };
 
     static inline assignment_table assignment_table_ = {

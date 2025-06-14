@@ -32,9 +32,10 @@ public:
         }
     }
 
-    void execute(Context& context) override {
+    StatementResultProxy execute(Context& context) override {
         auto result = expr_->evaluate(context);
         context.table().Set(name_, result);
+        return normal_result();
     }
 private:
     std::string name_;

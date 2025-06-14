@@ -11,10 +11,17 @@ public:
     : while_expr_(std::move(while_expr))
     , statement_(std::move(statement)) {}
 
-    void execute(Context& context) override {
-        while (while_expr_->evaluate(context)) {
-            statement_->execute(context);
+    StatementResultProxy execute(Context& context) override {
+        while (while_expr_->evaluate(context)->AsBool()) {
+            StatementResultProxy tmp_result = statement_->execute(context);
+            if (tmp_result.result == StatementResult::kBreak) {
+                break;
+            }
+            if (tmp_result.result == StatementResult::kReturn) {
+                return tmp_result;
+            }
         }
+        return normal_result();
     }
 
 private:
