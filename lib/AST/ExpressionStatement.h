@@ -4,9 +4,9 @@
 #include "FunctionCallExpression.h"
 
 
-class FunctionCallStatement: public StatementAST {
+class ExpressionStatement: public StatementAST {
 public:
-    FunctionCallStatement(std::unique_ptr<ExpressionAST> expression)
+    ExpressionStatement(std::unique_ptr<ExpressionAST> expression)
     : expression_(std::move(expression)) {}
 
     StatementResultProxy execute(Context &context) override {

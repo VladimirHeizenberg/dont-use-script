@@ -4,7 +4,7 @@ add_library(itmoscript interpreter.cpp
         AST/ContinueStatement.h
         AST/ReturnStatement.h
         AST/FunctionCallExpression.h
-        AST/FunctionCallStatement.h)
+        AST/ExpressionStatement.h)
 
 add_subdirectory(Value)
 

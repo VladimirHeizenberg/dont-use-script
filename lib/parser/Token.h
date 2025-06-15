@@ -25,6 +25,8 @@ enum class TokenType {
     kFunction,
     kReturn,
 
+    kNullType,
+
     // operators
     kAssign, // =
     kPlus, // +
@@ -51,6 +53,8 @@ enum class TokenType {
     // Punctuation
     kLParenthesis, // (
     kRParenthesis, // )
+    kLBracket,
+    kRBracket,
     kComma, // ,
 
     kEnd,

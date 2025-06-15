@@ -109,11 +109,45 @@ private:
 
     void TokenizeString() {
         std::string str;
-        char_source_->get(); // eat "
-        while (char_source_->peek() != '"') {
-            str += char_source_->get();
+        char_source_->get();
+
+        while (true) {
+            char c = char_source_->get();
+            if (c == '"') {
+                break;
+            }
+            if (c == '\\') {
+                char next = char_source_->get();
+                switch (next) {
+                    case 'n':
+                        str += '\n';
+                        break;
+                    case 't':
+                        str += '\t';
+                        break;
+                    case 'r':
+                        str += '\r';
+                        break;
+                    case '\\':
+                        str += '\\';
+                        break;
+                    case '"':
+                        str += '"';
+                        break;
+                    case '\'':
+                        str += '\'';
+                        break;
+                    case '0':
+                        str += '\0';
+                        break;
+                    default:
+                        throw std::runtime_error(std::string("Unknown escape sequence: \\") + next);
+                }
+            } else {
+                str += c;
+            }
         }
-        char_source_->get(); // eat "
+
         AddToken(TokenType::kString, str);
     }
 
@@ -164,6 +198,8 @@ private:
         {">=",  TokenType::kGreaterOrEqual},
         {"(",   TokenType::kLParenthesis},
         {")",   TokenType::kRParenthesis},
+        {"[",   TokenType::kLBracket},
+        {"]",   TokenType::kRBracket},
     };
 
     inline static const std::unordered_map<std::string, TokenType> kKeywordsTable = {
@@ -185,6 +221,7 @@ private:
 
         {"end",      TokenType::kEnd},
 
+        {"nil",      TokenType::kNullType},
         // keywords but operators
         {"and",      TokenType::kLogicalAnd},
         {"or",       TokenType::kLogicalOr},

@@ -7,14 +7,12 @@
 
 int main(int argc, char** argv) {
     std::string code = R"(
-        foo = function(a, b)
-            return a + b
+        fib = function(n)
+            if n == 0 then return 1 end if
+            if n == 1 then return 1 end if
+            return fib(n - 1) + fib(n - 2)
         end function
-
-        c = foo(4 + (2 * 3), 4 - (2 * 3)) * 5 + 10
-        println(c)
-
-        foo(1, 2)
+        println(fib(11))
     )";
     std::stringstream ss(code);
     std::unique_ptr<CharSource> source = std::make_unique<StreamCharSource>(ss);

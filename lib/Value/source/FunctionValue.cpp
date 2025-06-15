@@ -33,7 +33,7 @@ ValuePtr FunctionValue::AsFunctionCall(const std::vector<ValuePtr> &args_values,
     if (args_values.size() != arguments_.size()) {
         throw std::runtime_error("Function called with incorrect number of arguments");
     }
-    VariablesTable table;
+    VariablesTable table(context.table());
     for (int i = 0; i < args_values.size(); ++i) {
         table.Set(arguments_[i], args_values[i]);
     }

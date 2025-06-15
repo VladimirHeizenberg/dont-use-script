@@ -32,6 +32,10 @@ public:
     ValuePtr evaluate(Context& context) override {
         return value_;
     }
+
+    ExpressionType GetExpressionType() override {
+        return ExpressionType::kConstExpression;
+    }
 private:
     ValuePtr value_;
 };
@@ -42,6 +46,10 @@ public:
                        std::unique_ptr<ExpressionAST> expr)
     : operation_(operation)
     , expr_(std::move(expr)) {}
+
+    ExpressionType GetExpressionType() override {
+        return ExpressionType::kUnaryExpression;
+    }
 
     ValuePtr evaluate(Context& context) override {
         ValuePtr result = expr_->evaluate(context);
@@ -76,6 +84,10 @@ public:
     : operation_(operation)
     , lhs_(std::move(lhs))
     , rhs_(std::move(rhs)) {}
+
+    ExpressionType GetExpressionType() override {
+        return ExpressionType::kBinaryExpression;
+    }
 
     ValuePtr evaluate(Context& context) override {
         const ValuePtr lhs = lhs_->evaluate(context);

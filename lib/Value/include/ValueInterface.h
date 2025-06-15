@@ -14,6 +14,7 @@ enum class ValueType {
     kDoubleValue,
     kFunctionValue,
     kStringValue,
+    kNullValue,
 };
 
 inline std::string type_to_string(ValueType type) {
