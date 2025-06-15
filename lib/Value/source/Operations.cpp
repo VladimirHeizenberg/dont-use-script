@@ -48,6 +48,10 @@ ValuePtr LessDoubles(const ValuePtr& left, const ValuePtr& right) {
     return MakeBoolValue(left->AsDouble() < right->AsDouble());
 }
 
+ValuePtr False(const ValuePtr& left, const ValuePtr& right) {
+    return MakeBoolValue(false);
+}
+
 // Tables
 
 static const std::map<OperandsType, Function> AddTable = {
@@ -74,6 +78,7 @@ static const std::map<OperandsType, Function> SubtractTable = {
             if (left->AsString().ends_with(right->AsString())) {
                 return MakeStringValue(left->AsString() + right->AsString());
             }
+            return MakeStringValue(left->AsString());
         }
     },
 };
@@ -152,12 +157,27 @@ static const std::map<OperandsType, Function> EqualsTable = {
     {{ValueType::kDoubleValue, ValueType::kDoubleValue}, &EqualsDoubles},
     {{ValueType::kBoolValue, ValueType::kDoubleValue},   &EqualsDoubles},
     {{ValueType::kDoubleValue, ValueType::kBoolValue},   &EqualsDoubles},
+    // null
+    {{ValueType::kNullValue,  ValueType::kDoubleValue},   &False},
+    {{ValueType::kNullValue,  ValueType::kBoolValue},     &False},
+    {{ValueType::kNullValue,  ValueType::kStringValue},   &False},
+    {{ValueType::kNullValue,  ValueType::kArrayValue},    &False},
+    {{ValueType::kDoubleValue,ValueType::kNullValue},     &False},
+    {{ValueType::kBoolValue,  ValueType::kNullValue},     &False},
+    {{ValueType::kStringValue,ValueType::kNullValue},     &False},
+    {{ValueType::kArrayValue, ValueType::kNullValue},     &False},
+    {
+        {ValueType::kNullValue,  ValueType::kNullValue},
+        [](const ValuePtr& left, const ValuePtr& right) {
+                return MakeBoolValue(true);
+            }
+    },
     {
         {ValueType::kStringValue, ValueType::kStringValue},
         [](const ValuePtr& left, const ValuePtr& right) {
             return MakeBoolValue(left->AsString() == right->AsString());
         }
-    }
+    },
 };
 
 static const std::map<OperandsType, Function> LessTable = {
