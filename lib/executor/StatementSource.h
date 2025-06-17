@@ -27,5 +27,5 @@ public:
     }
 private:
     std::vector<std::unique_ptr<StatementAST>> statements_;
-    int index_ = 0;
+    int index_;
 };

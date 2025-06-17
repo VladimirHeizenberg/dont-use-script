@@ -40,6 +40,26 @@ private:
     ValuePtr value_;
 };
 
+class ArrayExpression final: public ExpressionAST {
+public:
+    ArrayExpression(std::vector<std::unique_ptr<ExpressionAST>> elements)
+        : elements_(std::move(elements)) {}
+
+    ExpressionType GetExpressionType() override {
+        return ExpressionType::kConstExpression;
+    }
+
+    ValuePtr evaluate(Context& context) override {
+        auto array = MakeArrayValue();
+        for (auto& element : elements_) {
+            array->AsArray().push_back(element->evaluate(context));
+        }
+        return array;
+    }
+private:
+    std::vector<std::unique_ptr<ExpressionAST>> elements_;
+};
+
 class UnaryExpressionAST final: public ExpressionAST {
 public:
     UnaryExpressionAST(OperationType operation, 

@@ -7,26 +7,26 @@
 StringValue::StringValue(const std::string& value)
     : value_(value) {}
 
-ValueType StringValue::GetValueType() const {
+ValueType StringValue::GetValueType() {
     return ValueType::kStringValue;
 }
 
-bool StringValue::AsBool() const {
+bool StringValue::AsBool() {
     return !value_.empty();
 }
 
-const std::string& StringValue::AsString() const {
+std::string& StringValue::AsString() {
     return value_;
 }
 
-const std::vector<std::unique_ptr<Value>>& StringValue::AsArray() const {
+std::vector<ValuePtr>& StringValue::AsArray() {
     throw std::runtime_error("String cannot be used as array");
 }
 
-double StringValue::AsDouble() const {
+double StringValue::AsDouble() {
     throw std::runtime_error("String cannot be used as double");
 }
 
-ValuePtr StringValue::AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) const {
+ValuePtr StringValue::AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) {
     throw std::runtime_error("String cannot be used as function call");
 }

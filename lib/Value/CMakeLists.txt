@@ -6,6 +6,6 @@ add_library(
         source/Operations.cpp
         source/MakeValue.cpp
         source/FunctionValue.cpp
-        include/NullValue.h
         source/NullValue.cpp
+        source/ArrayValue.cpp
 )

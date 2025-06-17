@@ -48,10 +48,6 @@ ValuePtr LessDoubles(const ValuePtr& left, const ValuePtr& right) {
     return MakeBoolValue(left->AsDouble() < right->AsDouble());
 }
 
-ValuePtr False(const ValuePtr& left, const ValuePtr& right) {
-    return MakeBoolValue(false);
-}
-
 // Tables
 
 static const std::map<OperandsType, Function> AddTable = {
@@ -63,6 +59,14 @@ static const std::map<OperandsType, Function> AddTable = {
         {ValueType::kStringValue, ValueType::kStringValue},
         [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
             return MakeStringValue(left->AsString() + right->AsString());
+        }
+    },
+    {
+        {ValueType::kArrayValue, ValueType::kArrayValue},
+        [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
+            std::vector<ValuePtr> values = left->AsArray();
+            values.insert(values.end(), right->AsArray().begin(), right->AsArray().end());
+            return MakeArrayValue(std::move(values));
         }
     },
 };
@@ -157,25 +161,27 @@ static const std::map<OperandsType, Function> EqualsTable = {
     {{ValueType::kDoubleValue, ValueType::kDoubleValue}, &EqualsDoubles},
     {{ValueType::kBoolValue, ValueType::kDoubleValue},   &EqualsDoubles},
     {{ValueType::kDoubleValue, ValueType::kBoolValue},   &EqualsDoubles},
-    // null
-    {{ValueType::kNullValue,  ValueType::kDoubleValue},   &False},
-    {{ValueType::kNullValue,  ValueType::kBoolValue},     &False},
-    {{ValueType::kNullValue,  ValueType::kStringValue},   &False},
-    {{ValueType::kNullValue,  ValueType::kArrayValue},    &False},
-    {{ValueType::kDoubleValue,ValueType::kNullValue},     &False},
-    {{ValueType::kBoolValue,  ValueType::kNullValue},     &False},
-    {{ValueType::kStringValue,ValueType::kNullValue},     &False},
-    {{ValueType::kArrayValue, ValueType::kNullValue},     &False},
-    {
-        {ValueType::kNullValue,  ValueType::kNullValue},
-        [](const ValuePtr& left, const ValuePtr& right) {
-                return MakeBoolValue(true);
-            }
-    },
     {
         {ValueType::kStringValue, ValueType::kStringValue},
         [](const ValuePtr& left, const ValuePtr& right) {
             return MakeBoolValue(left->AsString() == right->AsString());
+        }
+    },
+    {
+        {ValueType::kArrayValue, ValueType::kArrayValue},
+        [](const ValuePtr& left, const ValuePtr& right) {
+            if (left->AsArray().size() != right->AsArray().size()) {
+                return MakeBoolValue(false);
+            }
+            size_t size_of_arrays = left->AsArray().size();
+            auto array1 = left->AsArray();
+            auto array2 = right->AsArray();
+            for (int i = 0; i < size_of_arrays; ++i) {
+                if (NotEquals(array1[i], array2[i])->AsBool()) {
+                    return MakeBoolValue(false);
+                }
+            }
+            return MakeBoolValue(true);
         }
     },
 };
@@ -235,7 +241,18 @@ ValuePtr Power(const ValuePtr& left, const ValuePtr& right) {
 }
 
 ValuePtr Equals(const ValuePtr& left, const ValuePtr& right) {
-    return BinaryOperation(left, right, EqualsTable);
+    ValueType left_type = left->GetValueType();
+    ValueType right_type = right->GetValueType();
+    if (left_type == ValueType::kNullValue && right_type == ValueType::kNullValue) {
+        return MakeBoolValue(true);
+    }
+    if (left_type == ValueType::kNullValue || right_type == ValueType::kNullValue) {
+        return MakeBoolValue(false);
+    }
+    if (!EqualsTable.contains({left_type, right_type})) {
+        return MakeBoolValue(false);
+    }
+    return EqualsTable.at({left_type, right_type})(left, right);
 }
 
 ValuePtr NotEquals(const ValuePtr& left, const ValuePtr& right) {

@@ -33,5 +33,9 @@ class ExpressionAST {
 public:
     virtual ValuePtr evaluate(Context& context) = 0;
     virtual ExpressionType GetExpressionType() = 0;
+    // only for Assignable expression
+    virtual ValuePtr& GerReference(Context& context) {
+        throw std::runtime_error("Value cannot be assignment");
+    }
     virtual ~ExpressionAST() = default;
 };

@@ -19,11 +19,13 @@ enum class TokenType {
     kThen,
     kElif,
     kElse,
+    kFor,
     kWhile,
     kBreak,
     kContinue,
     kFunction,
     kReturn,
+    kIn,
 
     kNullType,
 

@@ -9,12 +9,12 @@ class StringValue final : public Value {
 public:
     explicit StringValue(const std::string& value);
 
-    [[nodiscard]] ValueType GetValueType() const override;
-    [[nodiscard]] bool AsBool() const override;
-    [[nodiscard]] const std::string& AsString() const override;
-    [[nodiscard]] const std::vector<std::unique_ptr<Value>>& AsArray() const override;
-    [[nodiscard]] double AsDouble() const override;
-    [[nodiscard]] ValuePtr AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) const override;
+    [[nodiscard]] ValueType GetValueType() override;
+    [[nodiscard]] bool AsBool() override;
+    [[nodiscard]] std::string& AsString() override;
+    [[nodiscard]] std::vector<ValuePtr>& AsArray() override;
+    [[nodiscard]] double AsDouble() override;
+    [[nodiscard]] ValuePtr AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) override;
 
 private:
     std::string value_;

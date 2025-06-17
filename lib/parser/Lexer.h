@@ -213,8 +213,11 @@ private:
         {"else",     TokenType::kElse},
 
         {"while",    TokenType::kWhile},
+        {"for",      TokenType::kFor},
         {"break",    TokenType::kBreak},
         {"continue", TokenType::kContinue},
+
+        {"in",       TokenType::kIn},
 
         {"function", TokenType::kFunction},
         {"return",   TokenType::kReturn},

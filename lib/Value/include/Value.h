@@ -5,6 +5,8 @@
 #include "StringValue.h"
 #include "DoubleValue.h"
 #include "BoolValue.h"
+#include "NullValue.h"
+#include "ArrayValue.h"
 
 #include "Operations.h"
 #include "MakeValue.h"

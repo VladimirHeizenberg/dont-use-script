@@ -9,3 +9,5 @@ ValuePtr MakeBoolValue(bool value);
 ValuePtr MakeFunctionValue(std::unique_ptr<StatementAST> function_body,
                            std::vector<std::string> arguments);
 ValuePtr MakeNullValue();
+ValuePtr MakeArrayValue();
+ValuePtr MakeArrayValue(std::vector<ValuePtr> values);

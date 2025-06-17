@@ -1,6 +1,8 @@
 #include "../include/FunctionValue.h"
 
-#include <complex>
+#include <stdexcept>
+
+#include "Value/include/MakeValue.h"
 
 FunctionValue::FunctionValue(std::unique_ptr<StatementAST> function_body,
                              std::vector<std::string> arguments)
@@ -8,28 +10,28 @@ FunctionValue::FunctionValue(std::unique_ptr<StatementAST> function_body,
     , arguments_(std::move(arguments)) {}
 
 
-ValueType FunctionValue::GetValueType() const {
+ValueType FunctionValue::GetValueType() {
     return ValueType::kFunctionValue;
 }
 
 
-double FunctionValue::AsDouble() const {
+double FunctionValue::AsDouble() {
     throw std::runtime_error("Function cannot be used as double");
 }
 
-bool FunctionValue::AsBool() const {
+bool FunctionValue::AsBool() {
     throw std::runtime_error("Function cannot be used as bool");
 }
 
-const std::string& FunctionValue::AsString() const {
+std::string& FunctionValue::AsString() {
     throw std::runtime_error("Function cannot be used as string");
 }
 
-const std::vector<std::unique_ptr<Value>>& FunctionValue::AsArray() const {
+std::vector<ValuePtr>& FunctionValue::AsArray() {
     throw std::runtime_error("Function cannot be used as array");
 }
 
-ValuePtr FunctionValue::AsFunctionCall(const std::vector<ValuePtr> &args_values, Context& context) const {
+ValuePtr FunctionValue::AsFunctionCall(const std::vector<ValuePtr> &args_values, Context& context) {
     if (args_values.size() != arguments_.size()) {
         throw std::runtime_error("Function called with incorrect number of arguments");
     }
@@ -45,7 +47,7 @@ ValuePtr FunctionValue::AsFunctionCall(const std::vector<ValuePtr> &args_values,
     if (result.result == StatementResult::kReturn) {
         return result.value;
     }
-    return nullptr;
+    return MakeNullValue();
 }
 
 

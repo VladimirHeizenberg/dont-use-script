@@ -22,26 +22,26 @@ DoubleValue::DoubleValue(double num)
     : num_(num)
     , str_value_(to_string_trimmed(num_)) {}
 
-ValueType DoubleValue::GetValueType() const {
+ValueType DoubleValue::GetValueType() {
     return ValueType::kDoubleValue;
 }
 
-double DoubleValue::AsDouble() const {
+double DoubleValue::AsDouble() {
     return num_;
 }
 
-bool DoubleValue::AsBool() const {
+bool DoubleValue::AsBool() {
     return num_ != 0;
 }
 
-const std::string& DoubleValue::AsString() const {
+std::string& DoubleValue::AsString() {
     return str_value_;
 }
 
-const std::vector<std::unique_ptr<Value>>& DoubleValue::AsArray() const {
+std::vector<ValuePtr>& DoubleValue::AsArray() {
     throw std::runtime_error("Number cannot be used as array");
 }
 
-ValuePtr DoubleValue::AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) const {
+ValuePtr DoubleValue::AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) {
     throw std::runtime_error("Number cannot be used as function call");
 }

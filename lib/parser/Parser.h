@@ -10,6 +10,7 @@
 #include "AST/AST.h"
 #include "Token.h"
 #include "TokenSource.h"
+#include "AST/ForStatement.h"
 
 class Parser {
 public:
@@ -37,6 +38,7 @@ private:
         if (Match(TokenType::kPrintln)) return ParsePrintlnStatement();
         if (Match(TokenType::kIf)) return ParseIfStatement(true, parsing_function_flag);
         if (Match(TokenType::kWhile)) return ParseWhileStatement(parsing_function_flag);
+        if (Match(TokenType::kFor)) return ParseForStatement(parsing_function_flag);
         if (Match(TokenType::kReturn)) {
             if (!parsing_function_flag) {
                 throw std::runtime_error("return outside function");
@@ -106,6 +108,17 @@ private:
         );
     }
 
+    statement ParseForStatement(bool parsing_function_flag) {
+        std::string name = Peek().Text();
+        Check(TokenType::kIdentifier);
+        Check(TokenType::kIn);
+        auto expr = ParseExpression();
+        auto scope = ParseScopeStatement({TokenType::kEnd}, parsing_function_flag);
+        Check(TokenType::kEnd);
+        Check(TokenType::kFor);
+        return std::make_unique<ForStatement>(name, std::move(expr), std::move(scope));
+    }
+
     statement ParseScopeStatement(const std::set<TokenType>& stop_words,
                                   bool parsing_function_flag) {
         std::unique_ptr<ScopeStatement> scope = std::make_unique<ScopeStatement>();
@@ -116,10 +129,13 @@ private:
     }
 
     statement ParseAssignStatement() {
+        Token current = Peek();
+        if (reserved_names_for_functions.contains(current.Text())) {
+            throw std::runtime_error("It's forbidden to assign system function names");
+        }
         for (auto& [token, assignment]: assignment_table_) {
             // std::cerr << Peek().Type() << " " << Get(1).Type() << "\n";
             if (Peek().Type() == TokenType::kIdentifier && Peek(1).Type() == token) {
-                Token current = Peek();
                 Check(TokenType::kIdentifier);
                 Check(token);
                 return std::make_unique<AssignStatement>(
@@ -200,20 +216,22 @@ private:
     expression ParseLogicalNot() {
         if (Match(TokenType::kLogicalNot)) {
             return std::make_unique<UnaryExpressionAST>(
-                OperationType::kLogicalNot, ParseSingleExpression()
+                OperationType::kLogicalNot, ParseSuffixExpression()
             );
         }
-        return ParseSingleExpression();
+        return ParseSuffixExpression();
     }
 
-    expression ParseSingleExpression() {
+    expression ParseSuffixExpression() {
         auto expr = ParseLiteral();
 
         while (true) {
             if (Match(TokenType::kLParenthesis)) {
                 expr = ParseFunctionCall(std::move(expr));
             } else if (Match(TokenType::kLBracket)) {
-
+                auto index_expr = ParseExpression();
+                Check(TokenType::kRBracket);
+                expr = std::make_unique<IndexExpression>(std::move(expr), std::move(index_expr));
             } else break;
         }
         return expr;
@@ -260,7 +278,22 @@ private:
         if (Match(TokenType::kFunction)) {
             return ParseFunctionDeclaration();
         }
+        if (Match(TokenType::kLBracket)) {
+            return ParseArray();
+        }
         throw std::runtime_error("expected literal or number");
+    }
+
+    expression ParseArray() {
+        std::vector<expression> exprs;
+        while (!Match(TokenType::kRBracket)) {
+            exprs.push_back(ParseExpression());
+            if (!Match(TokenType::kComma)) {
+                Check(TokenType::kRBracket);
+                break;
+            }
+        }
+        return std::make_unique<ArrayExpression>(std::move(exprs));
     }
 
     expression ParseFunctionCall(expression function) {
@@ -307,6 +340,22 @@ private:
     std::unique_ptr<TokenSource> tokens_;
 
     // tables for translation from token type to operations
+
+    static inline const std::set<std::string> reserved_names_for_functions = {
+        // functions for nums
+        "abs", "ceil", "floor", "round", "sqrt",
+        "rnd", "parse_num", "to_string",
+        // len
+        "len",
+        // functions for strings
+        "upper", "lower", "split",
+        "join", "replace",
+        // functions for lists
+        "range", "push", "pop", "insert",
+        "remove", "sort",
+        // system functions
+        "print", "println", "read", "stacktrace",
+    };
 
     static inline operators_table logical_or_table_ = {
          {TokenType::kLogicalOr, OperationType::kLogicalOr},

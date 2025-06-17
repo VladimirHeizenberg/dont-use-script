@@ -6,6 +6,7 @@
 #include "../include/BoolValue.h"
 #include "../include/FunctionValue.h"
 #include "../include/NullValue.h"
+#include "Value/include/ArrayValue.h"
 
 ValuePtr MakeStringValue(const std::string& value) {
     return std::make_shared<StringValue>(value);
@@ -26,4 +27,12 @@ ValuePtr MakeFunctionValue(std::unique_ptr<StatementAST> function_body,
 
 ValuePtr MakeNullValue() {
     return std::make_shared<NullValue>();
+}
+
+ValuePtr MakeArrayValue() {
+    return std::make_shared<ArrayValue>();
+}
+
+ValuePtr MakeArrayValue(std::vector<ValuePtr> values) {
+    return std::make_shared<ArrayValue>(std::move(values));
 }

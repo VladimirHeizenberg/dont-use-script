@@ -30,12 +30,12 @@ inline std::string type_to_string(ValueType type) {
 
 class Value {
 public:
-    [[nodiscard]] virtual ValueType GetValueType() const = 0;
-    [[nodiscard]] virtual bool AsBool() const = 0;
-    [[nodiscard]] virtual double AsDouble() const = 0;
-    [[nodiscard]] virtual const std::string& AsString() const = 0;
-    [[nodiscard]] virtual const std::vector<std::unique_ptr<Value>>& AsArray() const = 0;
-    [[nodiscard]] virtual ValuePtr AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) const = 0;
+    [[nodiscard]] virtual ValueType GetValueType() = 0;
+    [[nodiscard]] virtual bool AsBool() = 0;
+    [[nodiscard]] virtual double AsDouble() = 0;
+    [[nodiscard]] virtual std::string& AsString() = 0;
+    [[nodiscard]] virtual std::vector<ValuePtr>& AsArray() = 0;
+    [[nodiscard]] virtual ValuePtr AsFunctionCall(const std::vector<ValuePtr>& args, Context& context) = 0;
 
     virtual ~Value() = default;
 };
