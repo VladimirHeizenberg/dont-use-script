@@ -48,7 +48,7 @@ enum class TokenType {
     kLogicalAnd, // and
     kLogicalOr, // or
     kLogicalNot, // not
-
+    kColon, // :
 
     // Punctuation
     kLParenthesis, // (

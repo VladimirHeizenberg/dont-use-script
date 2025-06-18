@@ -1,5 +1,6 @@
 #include "src/value/headers/MakeValue.h"
 
+#include "headers/SystemFunction.h"
 #include "src/value/headers/StringValue.h"
 #include "src/value/headers/DoubleValue.h"
 #include "src/value/headers/BoolValue.h"
@@ -23,6 +24,10 @@ ValuePtr MakeBoolValue(bool value) {
 ValuePtr MakeFunctionValue(std::unique_ptr<StatementAST> function_body,
                            std::vector<std::string> arguments) {
     return std::make_shared<FunctionValue>(std::move(function_body), std::move(arguments));
+}
+
+ValuePtr MakeSystemFunctionValue(std::function<ValuePtr(const std::vector<ValuePtr>&)> function) {
+    return std::make_shared<SystemFunctionValue>(std::move(function));
 }
 
 ValuePtr MakeNullValue() {

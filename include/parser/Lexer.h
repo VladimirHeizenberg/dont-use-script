@@ -48,11 +48,10 @@ private:
         {")",   TokenType::kRParenthesis},
         {"[",   TokenType::kLBracket},
         {"]",   TokenType::kRBracket},
+        {":",   TokenType::kColon},
     };
 
     inline static const std::unordered_map<std::string, TokenType> kKeywordsTable = {
-        {"print",    TokenType::kPrint},
-        {"println",  TokenType::kPrintln},
         {"true",     TokenType::kTrue},
         {"false",    TokenType::kFalse},
         {"if",       TokenType::kIf},

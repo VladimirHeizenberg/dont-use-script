@@ -8,6 +8,7 @@ add_library(
         FunctionValue.cpp
         NullValue.cpp
         ArrayValue.cpp
+        headers/SystemFunction.h
 )
 
 target_include_directories(itmoscript_value_lib PUBLIC ${PROJECT_SOURCE_DIR})

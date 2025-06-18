@@ -1,7 +1,124 @@
 #include "include/parser/Parser.h"
 
+#include <stdexcept>
+#include <functional>
+
 #include "src/AST/AST.h"
 #include "src/value/headers/Value.h"
+
+// -------------------tables-----------------------
+
+static const std::unordered_map<TokenType, std::function<Parser::expression(const Token&)>> kIdentifierTable = {
+    {
+        TokenType::kNumber,
+        [](const Token& token) {
+            return std::make_unique<ConstExpressionAST>(
+                MakeDoubleValue(std::stod(token.Text()))
+            );
+        }
+    },
+    {
+        TokenType::kString,
+        [](const Token& token) {
+            return std::make_unique<ConstExpressionAST>(
+                MakeStringValue(Token(token).Text())
+            );
+        }
+    },
+    {
+        TokenType::kTrue,
+        [](const Token& token) {
+            return std::make_unique<ConstExpressionAST>(
+                MakeBoolValue(true)
+            );
+        }
+    },
+    {
+        TokenType::kFalse,
+        [](const Token& token) {
+            return std::make_unique<ConstExpressionAST>(
+                MakeBoolValue(false)
+            );
+        }
+    },
+    {
+        TokenType::kNullType,
+        [](const Token& token) {
+            return std::make_unique<ConstExpressionAST>(
+                MakeNullValue()
+            );
+        }
+    },
+    {
+        TokenType::kIdentifier,
+        [](const Token& token) {
+            return std::make_unique<VariableExpression>(
+                token.Text()
+            );
+        }
+    },
+};
+
+static inline const std::set<std::string> reserved_names_for_functions = {
+    // functions for nums
+    "abs", "ceil", "floor", "round", "sqrt",
+    "rnd", "parse_num", "to_string",
+    // len
+    "len",
+    // functions for strings
+    "upper", "lower", "split",
+    "join", "replace",
+    // functions for lists
+    "range", "push", "pop", "insert",
+    "remove", "sort",
+    // system functions
+    "print", "println", "read", "stacktrace",
+};
+
+static const Parser::operators_table logical_or_table_ = {
+     {TokenType::kLogicalOr, OperationType::kLogicalOr},
+};
+
+static const Parser::operators_table logical_and_table_ = {
+     {TokenType::kLogicalAnd, OperationType::kLogicalAnd},
+};
+
+static const Parser::operators_table equality_table_ = {
+    {TokenType::kEqual,     OperationType::kEqual},
+    {TokenType::kNotEqual,  OperationType::kNotEqual},
+};
+
+static const Parser::operators_table relations_table_ = {
+    {TokenType::kLess,            OperationType::kLess},
+    {TokenType::kGreater,         OperationType::kGreater},
+    {TokenType::kLessOrEqual,     OperationType::kLessOrEqual},
+    {TokenType::kGreaterOrEqual,  OperationType::kGreaterOrEqual},
+};
+
+static const Parser::operators_table add_table_ = {
+    {TokenType::kPlus,   OperationType::kPlusOp},
+    {TokenType::kMinus,  OperationType::kMinusOp},
+};
+
+static const Parser::operators_table mult_table_ = {
+    {TokenType::kMul,       OperationType::kMulOp},
+    {TokenType::kDiv,       OperationType::kDivOp},
+    {TokenType::kRemainder, OperationType::kRemainderOp},
+};
+
+static const Parser::operators_table power_table_ = {
+    {TokenType::kPower, OperationType::kPowerOp},
+};
+
+static const Parser::assignment_table assignment_table_ = {
+    {TokenType::kAssign,        AssignmentOperationType::kAssign},
+    {TokenType::kPlusAssign,    AssignmentOperationType::kPlusAssign},
+    {TokenType::kMinusAssign,   AssignmentOperationType::kMinusAssign},
+    {TokenType::kMulAssign,     AssignmentOperationType::kMulAssign},
+    {TokenType::kDivAssign,     AssignmentOperationType::kDivAssign},
+};
+
+// -----------------parser-------------------
 
 Parser::Parser(std::unique_ptr<TokenSource> tokens)
 : tokens_(std::move(tokens)) {}
@@ -16,8 +133,6 @@ std::vector<Parser::statement> Parser::parse() {
 }
 
 Parser::statement Parser::ParseStatement(bool parsing_function_flag) {
-    if (Match(TokenType::kPrint)) return ParsePrintStatement();
-    if (Match(TokenType::kPrintln)) return ParsePrintlnStatement();
     if (Match(TokenType::kIf)) return ParseIfStatement(true, parsing_function_flag);
     if (Match(TokenType::kWhile)) return ParseWhileStatement(parsing_function_flag);
     if (Match(TokenType::kFor)) return ParseForStatement(parsing_function_flag);
@@ -135,6 +250,24 @@ Parser::expression Parser::ParseExpression() {
     return ParseLogicalOr();
 }
 
+Parser::expression Parser::ParseBinaryOperations(expression (Parser::*next_level)(), const operators_table& table) {
+    expression expr = (this->*next_level)();
+    while (true) {
+        bool matched = false;
+        for (const auto& [token, operation] : table) {
+            if (Match(token)) {
+                expr = std::make_unique<BinaryExpressionAST>(
+                    operation, std::move(expr), (this->*next_level)()
+                );
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) break;
+    }
+    return expr;
+}
+
 Parser::expression Parser::ParseLogicalOr() {
     return ParseBinaryOperations(&Parser::ParseLogicalAnd, logical_or_table_);
 }
@@ -199,36 +332,9 @@ Parser::expression Parser::ParseSuffixExpression() {
 
 Parser::expression Parser::ParseLiteral() {
     auto token = Peek();
-    // TODO: replace with the map
-    if (Match(TokenType::kNumber)) {
-        return std::make_unique<ConstExpressionAST>(
-            MakeDoubleValue(std::stod(token.Text()))
-        );
-    }
-    if (Match(TokenType::kString)) {
-        return std::make_unique<ConstExpressionAST>(
-            MakeStringValue(Token(token).Text())
-        );
-    }
-    if (Match(TokenType::kTrue)) {
-        return std::make_unique<ConstExpressionAST>(
-            MakeBoolValue(true)
-        );
-    }
-    if (Match(TokenType::kFalse)) {
-        return std::make_unique<ConstExpressionAST>(
-            MakeBoolValue(false)
-        );
-    }
-    if (Match(TokenType::kNullType)) {
-        return std::make_unique<ConstExpressionAST>(
-            MakeNullValue()
-        );
-    }
-    if (Match(TokenType::kIdentifier)) {
-        return std::make_unique<VariableExpression>(
-            token.Text()
-        );
+    if (kIdentifierTable.contains(token.Type())) {
+        Check(token.Type());
+        return kIdentifierTable.at(token.Type())(token);
     }
     if (Match(TokenType::kLParenthesis)) {
         auto expr = ParseExpression();
@@ -288,6 +394,7 @@ Parser::expression Parser::ParseFunctionDeclaration() {
 bool Parser::Match(TokenType type) const {
     return tokens_->Match(type);
 }
+
 void Parser::Check(TokenType type) const {
     tokens_->Check(type);
 }

@@ -8,14 +8,7 @@
 #include "src/AST/VariablesTable.h"
 #include "src/AST/ArithmeticExpression.h"
 #include "src/AST/VariableExpression.h"
-
-enum class AssignmentOperationType {
-    kAssign,
-    kPlusAssign,
-    kMinusAssign,
-    kMulAssign,
-    kDivAssign,
-};
+#include "src/AST/AssignmentOperationType.h"
 
 class AssignStatement final: public StatementAST {
 public:

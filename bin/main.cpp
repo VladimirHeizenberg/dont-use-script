@@ -7,8 +7,9 @@
 
 int main(int argc, char** argv) {
     std::string code = R"(
-        println([1, 2] + [3, "hello \"world\""])
+        println("hello")
     )";
+
     std::stringstream ss(code);
     Lexer lexer(ss);
     auto res = lexer.tokenize();

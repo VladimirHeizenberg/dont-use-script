@@ -2,29 +2,10 @@
 #include "src/AST/Expression.h"
 #include "src/value/headers/MakeValue.h"
 #include "src/value/headers/Operations.h"
+#include "src/AST/OperationType.h"
 
 #include <memory>
 #include <stdexcept>
-
-enum class OperationType {
-    kPlusOp,
-    kMinusOp,
-    kMulOp,
-    kDivOp,
-    kRemainderOp,
-    kPowerOp,
-    kNoOp,
-
-    kLogicalAnd,
-    kLogicalOr,
-    kLogicalNot,
-    kEqual,
-    kNotEqual,
-    kLess,
-    kGreater,
-    kLessOrEqual,
-    kGreaterOrEqual,
-};
 
 class ConstExpressionAST final: public ExpressionAST {
 public:
