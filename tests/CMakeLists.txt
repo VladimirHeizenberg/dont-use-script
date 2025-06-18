@@ -17,7 +17,8 @@ add_executable(
   function_test.cpp
   types_test.cpp
   loop_and_branch_test.cpp
-        escape_string_test.cpp
+  escape_string_test.cpp
+  array_test.cpp
 )
 
 target_link_libraries(

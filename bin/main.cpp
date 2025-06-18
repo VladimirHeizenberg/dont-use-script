@@ -7,7 +7,10 @@
 
 int main(int argc, char** argv) {
     std::string code = R"(
-        println("hello")
+        a = 42
+        b = a
+        a = 41
+        println(b)
     )";
 
     std::stringstream ss(code);

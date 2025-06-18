@@ -81,7 +81,8 @@ static const std::map<OperandsType, Function> SubtractTable = {
         {ValueType::kStringValue, ValueType::kStringValue},
         [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
             if (left->AsString().ends_with(right->AsString())) {
-                return MakeStringValue(left->AsString() + right->AsString());
+                auto& left_str = left->AsString();
+                return MakeStringValue(std::string(left_str.begin(), left_str.begin() + right->AsString().size()));
             }
             return MakeStringValue(left->AsString());
         }
@@ -97,7 +98,6 @@ static const std::map<OperandsType, Function> MultiplyTable = {
         {ValueType::kStringValue, ValueType::kDoubleValue},
         [](const ValuePtr& left, const ValuePtr& right) -> ValuePtr {
             std::string result;
-            // TODO: REDO
             result.reserve(left->AsString().size() * static_cast<size_t>(right->AsDouble()));
             for (int i = 0; i < right->AsDouble(); ++i) {
                 result += left->AsString();

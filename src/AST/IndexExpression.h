@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 #include "src/AST/Expression.h"
 
 class IndexExpression final: public ExpressionAST {
@@ -14,12 +14,15 @@ public:
 
     ValuePtr evaluate(Context& context) override {
         auto result_of_expr = expression_->evaluate(context);
+        auto index_res = index_expression_->evaluate(context)->AsDouble();
         if (result_of_expr->GetValueType() == ValueType::kArrayValue) {
-            return result_of_expr->AsArray().at(index_expression_->evaluate(context)->AsDouble());
+            auto& array = result_of_expr->AsArray();
+            return array.at(index_res < 0 ? array.size() + index_res : index_res);
         }
         if (result_of_expr->GetValueType() == ValueType::kStringValue) {
+            auto& str = result_of_expr->AsString();
             return MakeStringValue(
-                std::string{result_of_expr->AsString().at(index_expression_->evaluate(context)->AsDouble())}
+                std::string{str.at(index_res < 0 ? str.size() + index_res : index_res)}
             );
         }
         throw std::runtime_error("Invalid index expression");

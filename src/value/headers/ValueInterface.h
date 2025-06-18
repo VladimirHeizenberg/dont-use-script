@@ -6,16 +6,8 @@
 
 #include "src/value/headers/ValueDeclaration.h"
 #include "src/executor/Context.h"
+#include "src/value/headers/ValueType.h"
 
-
-enum class ValueType {
-    kArrayValue,
-    kBoolValue,
-    kDoubleValue,
-    kFunctionValue,
-    kStringValue,
-    kNullValue,
-};
 
 inline std::string type_to_string(ValueType type) {
     switch (type) {

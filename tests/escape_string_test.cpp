@@ -37,6 +37,5 @@ TEST(EscapeTestSuite, WrongEscapeSequenceTest) {
     std::istringstream input(code);
     std::ostringstream output;
 
-    // TODO: REDO
-    ASSERT_ANY_THROW(interpret(input, output));
+    ASSERT_FALSE(interpret(input, output));
 }
