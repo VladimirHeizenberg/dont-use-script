@@ -1,12 +1,11 @@
 #include "interpreter.h"
 
-#include "parser/Lexer.h"
-#include "parser/Parser.h"
-#include "executor/Executor.h"
+#include "../include/parser/Lexer.h"
+#include "../include/parser/Parser.h"
+#include "../include/executor/Executor.h"
 
 bool interpret(std::istream& input, std::ostream& output) {
-    std::unique_ptr<CharSource> source = std::make_unique<StreamCharSource>(input);
-    Lexer lexer(std::move(source));
+    Lexer lexer(input);
     auto res = lexer.tokenize();
     std::unique_ptr<TokenSource> tokens = std::make_unique<VectorReferenceTokenSource>(res);
     Parser parser(std::move(tokens));

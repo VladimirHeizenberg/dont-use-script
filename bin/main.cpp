@@ -1,17 +1,16 @@
 #include <iostream>
 #include <sstream>
 
-#include "../lib/parser/Lexer.h"
-#include "../lib/parser/Parser.h"
-#include "lib/executor/Executor.h"
+#include "include/parser/Lexer.h"
+#include "include/parser/Parser.h"
+#include "include/executor/Executor.h"
 
 int main(int argc, char** argv) {
     std::string code = R"(
         println([1, 2] + [3, "hello \"world\""])
     )";
     std::stringstream ss(code);
-    std::unique_ptr<CharSource> source = std::make_unique<StreamCharSource>(ss);
-    Lexer lexer(std::move(source));
+    Lexer lexer(ss);
     auto res = lexer.tokenize();
     std::unique_ptr<TokenSource> tokens = std::make_unique<VectorReferenceTokenSource>(res);
     Parser parser(std::move(tokens));
