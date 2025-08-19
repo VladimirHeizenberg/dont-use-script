@@ -1,7 +1,9 @@
 #pragma once
 
-#include "src/AST/VariablesTable.h"
+#include "VariablesTable.h"
 
+
+namespace itmo_script::executor {
 
 class Context {
 public:
@@ -21,3 +23,5 @@ private:
     std::ostream& output_;
     VariablesTable& table_;
 };
+
+} // namespace itmo_script::executor

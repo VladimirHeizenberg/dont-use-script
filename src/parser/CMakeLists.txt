@@ -1,12 +1,10 @@
 add_library(
-        itmoscript_parser
-        Lexer.cpp
-        Parser.cpp
-        TokenSource.cpp
-        Token.cpp
-        ../AST/OperationType.h
-        ../AST/AssignmentOperationType.h
-        ../executor/Executor.cpp
+    parser
+    Lexer.cpp
+    Parser.cpp
+    TokenSource.cpp
 )
 
-target_include_directories(itmoscript_parser PUBLIC ${PROJECT_SOURCE_DIR})
+target_link_libraries(parser PUBLIC value)
+
+target_include_directories(parser PUBLIC ${PROJECT_SOURCE_DIR})

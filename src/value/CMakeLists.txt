@@ -1,14 +1,8 @@
 add_library(
-        itmoscript_value_lib
-        StringValue.cpp
-        DoubleValue.cpp
-        BoolValue.cpp
-        Operations.cpp
-        MakeValue.cpp
-        FunctionValue.cpp
-        NullValue.cpp
-        ArrayValue.cpp
-        headers/SystemFunction.h
+    value
+    Value.cpp
+    MakeValue.cpp
+    Operation.cpp
 )
 
-target_include_directories(itmoscript_value_lib PUBLIC ${PROJECT_SOURCE_DIR})
+target_include_directories(value PUBLIC ${PROJECT_SOURCE_DIR})

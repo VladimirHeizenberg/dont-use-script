@@ -1,19 +1,21 @@
 #include "interpreter.h"
 
-#include "../include/parser/Lexer.h"
-#include "../include/parser/Parser.h"
-#include "../include/executor/Executor.h"
+#include "src/parser/Lexer.h"
+#include "src/parser/Parser.h"
+#include "src/executor/Executor.h"
 
 bool interpret(std::istream& input, std::ostream& output) {
-    Lexer lexer(input);
+    itmo_script::parser::Lexer lexer(input);
     try {
-        auto res = lexer.tokenize();
-        std::unique_ptr<TokenSource> tokens = std::make_unique<VectorReferenceTokenSource>(res);
-        Parser parser(std::move(tokens));
-        std::unique_ptr<StatementSource> statement_source = std::make_unique<VectorStatementSource>(
-            parser.parse()
+        auto res = lexer.Tokenize();
+        std::unique_ptr<itmo_script::parser::TokenSource> tokens = (
+            std::make_unique<itmo_script::parser::VectorReferenceTokenSource>(res)
         );
-        Executor executor(std::move(statement_source), input, output);
+        itmo_script::parser::Parser parser(std::move(tokens));
+        std::unique_ptr<itmo_script::executor::StatementSource> statement_source = (
+            std::make_unique<itmo_script::executor::VectorStatementSource>(parser.parse())
+        );
+        itmo_script::executor::Executor executor(std::move(statement_source), input, output);
         executor.Execute();
     } catch (std::runtime_error& e) {
         std::cerr << e.what();

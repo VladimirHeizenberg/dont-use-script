@@ -1,15 +1,26 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.20)
 
 project(
-    itmoscript_interpreter
+    itmo-script
+    VERSION 1.0
+    DESCRIPTION "ITMOScript interpreter"
     LANGUAGES CXX
 )
 
 set(CMAKE_CXX_STANDARD 23)
 
+if (WIN32) # Install dlls in the same directory as the executable on Windows
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+endif ()
+
+
 add_subdirectory(src)
 add_subdirectory(lib)
-add_subdirectory(bin)
 
 enable_testing()
 add_subdirectory(tests)

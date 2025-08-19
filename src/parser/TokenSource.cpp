@@ -1,10 +1,11 @@
-#include "include/parser/TokenSource.h"
-#include "src/parser/headers/Token.h"
+#include "TokenSource.h"
 
 #include <stdexcept>
 
+namespace itmo_script::parser {
+
 bool TokenSource::Match(TokenType type) {
-    if (Peek().Type() == type) {
+    if (Peek().GetType() == type) {
         Get();
         return true;
     }
@@ -57,4 +58,6 @@ const Token& VectorReferenceTokenSource::Get() {
 
 bool VectorReferenceTokenSource::eof() const {
     return index_ == tokens_.size();
+}
+
 }

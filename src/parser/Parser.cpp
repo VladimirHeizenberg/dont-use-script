@@ -1,59 +1,62 @@
-#include "include/parser/Parser.h"
+#include "Parser.h"
 
 #include <stdexcept>
 #include <functional>
 
-#include "src/AST/AST.h"
-#include "src/value/headers/Value.h"
+#include "src/ast/ast.h"
+#include "src/value/Value.h"
+#include "src/value/MakeValue.h"
 
 // -------------------tables-----------------------
+
+namespace itmo_script::parser {
 
 static const std::unordered_map<TokenType, std::function<Parser::expression(const Token&)>> kIdentifierTable = {
     {
         TokenType::kNumber,
         [](const Token& token) {
-            return std::make_unique<ConstExpressionAST>(
-                MakeDoubleValue(std::stod(token.Text()))
+            return std::make_unique<ast::CnstExpr>(
+                value::MakeDouble(std::stod(token.GetText()))
             );
         }
     },
     {
         TokenType::kString,
         [](const Token& token) {
-            return std::make_unique<ConstExpressionAST>(
-                MakeStringValue(Token(token).Text())
+            return std::make_unique<ast::CnstExpr>(
+                value::MakeString(Token(token).GetText())
             );
         }
     },
     {
         TokenType::kTrue,
         [](const Token& token) {
-            return std::make_unique<ConstExpressionAST>(
-                MakeBoolValue(true)
+            return std::make_unique<ast::CnstExpr>(
+                value::MakeBool(true)
             );
         }
     },
     {
         TokenType::kFalse,
         [](const Token& token) {
-            return std::make_unique<ConstExpressionAST>(
-                MakeBoolValue(false)
+            return std::make_unique<ast::CnstExpr>(
+                value::MakeBool(false)
             );
         }
     },
     {
         TokenType::kNullType,
         [](const Token& token) {
-            return std::make_unique<ConstExpressionAST>(
-                MakeNullValue()
+            return std::make_unique<ast::CnstExpr>(
+                value::MakeNull()
             );
         }
     },
     {
         TokenType::kIdentifier,
         [](const Token& token) {
-            return std::make_unique<VariableExpression>(
-                token.Text()
+            return std::make_unique<ast::LiteralExpr>(
+                token.GetText()
             );
         }
     },
@@ -76,46 +79,46 @@ static inline const std::set<std::string> reserved_names_for_functions = {
 };
 
 static const Parser::operators_table logical_or_table_ = {
-     {TokenType::kLogicalOr, OperationType::kLogicalOr},
+     {TokenType::kLogicalOr, ast::OperationType::kLogicalOr},
 };
 
 static const Parser::operators_table logical_and_table_ = {
-     {TokenType::kLogicalAnd, OperationType::kLogicalAnd},
+     {TokenType::kLogicalAnd, ast::OperationType::kLogicalAnd},
 };
 
 static const Parser::operators_table equality_table_ = {
-    {TokenType::kEqual,     OperationType::kEqual},
-    {TokenType::kNotEqual,  OperationType::kNotEqual},
+    {TokenType::kEqual,     ast::OperationType::kEqual},
+    {TokenType::kNotEqual,  ast::OperationType::kNotEqual},
 };
 
 static const Parser::operators_table relations_table_ = {
-    {TokenType::kLess,            OperationType::kLess},
-    {TokenType::kGreater,         OperationType::kGreater},
-    {TokenType::kLessOrEqual,     OperationType::kLessOrEqual},
-    {TokenType::kGreaterOrEqual,  OperationType::kGreaterOrEqual},
+    {TokenType::kLess,            ast::OperationType::kLess},
+    {TokenType::kGreater,         ast::OperationType::kGreater},
+    {TokenType::kLessOrEqual,     ast::OperationType::kLessOrEqual},
+    {TokenType::kGreaterOrEqual,  ast::OperationType::kGreaterOrEqual},
 };
 
 static const Parser::operators_table add_table_ = {
-    {TokenType::kPlus,   OperationType::kPlusOp},
-    {TokenType::kMinus,  OperationType::kMinusOp},
+    {TokenType::kPlus,   ast::OperationType::kPlusOp},
+    {TokenType::kMinus,  ast::OperationType::kMinusOp},
 };
 
 static const Parser::operators_table mult_table_ = {
-    {TokenType::kMul,       OperationType::kMulOp},
-    {TokenType::kDiv,       OperationType::kDivOp},
-    {TokenType::kRemainder, OperationType::kRemainderOp},
+    {TokenType::kAsteriks,       ast::OperationType::kMulOp},
+    {TokenType::kSlash,       ast::OperationType::kDivOp},
+    {TokenType::kRemainder, ast::OperationType::kRemainderOp},
 };
 
 static const Parser::operators_table power_table_ = {
-    {TokenType::kPower, OperationType::kPowerOp},
+    {TokenType::kPower, ast::OperationType::kPowerOp},
 };
 
 static const Parser::assignment_table assignment_table_ = {
-    {TokenType::kAssign,        AssignmentOperationType::kAssign},
-    {TokenType::kPlusAssign,    AssignmentOperationType::kPlusAssign},
-    {TokenType::kMinusAssign,   AssignmentOperationType::kMinusAssign},
-    {TokenType::kMulAssign,     AssignmentOperationType::kMulAssign},
-    {TokenType::kDivAssign,     AssignmentOperationType::kDivAssign},
+    {TokenType::kAssign,        ast::AssignType::kAssign},
+    {TokenType::kPlusAssign,    ast::AssignType::kPlusAssign},
+    {TokenType::kMinusAssign,   ast::AssignType::kMinusAssign},
+    {TokenType::kMulAssign,     ast::AssignType::kMulAssign},
+    {TokenType::kDivAssign,     ast::AssignType::kDivAssign},
 };
 
 // -----------------parser-------------------
@@ -142,18 +145,18 @@ Parser::statement Parser::ParseStatement(bool parsing_function_flag) {
         }
         return ParseReturnStatement();
     }
-    if (Match(TokenType::kBreak)) return std::make_unique<BreakStatement>();
-    if (Match(TokenType::kContinue)) return std::make_unique<ContinueStatement>();
-    if (Peek().Type() == TokenType::kIdentifier && Peek(1).Type() == TokenType::kAssign) {
+    if (Match(TokenType::kBreak)) return std::make_unique<ast::BreakStmt>();
+    if (Match(TokenType::kContinue)) return std::make_unique<ast::ContinueStmt>();
+    if (Peek().GetType() == TokenType::kIdentifier && Peek(1).GetType() == TokenType::kAssign) {
         return ParseAssignStatement();
     }
-    return std::make_unique<ExpressionStatement>(ParseExpression());
+    return std::make_unique<ast::ExprStmt>(ParseExpression());
 }
 
 
 Parser::statement Parser::ParsePrintStatement() {
     Check(TokenType::kLParenthesis);
-    statement print = std::make_unique<PrintStatement>(
+    statement print = std::make_unique<ast::PrintStmt>(
         ParseExpression()
     );
     Check(TokenType::kRParenthesis);
@@ -162,7 +165,7 @@ Parser::statement Parser::ParsePrintStatement() {
 
 Parser::statement Parser::ParsePrintlnStatement() {
     Check(TokenType::kLParenthesis);
-    statement println = std::make_unique<PrintlnStatement>(
+    statement println = std::make_unique<ast::PrintlnStmt>(
         ParseExpression()
     );
     Check(TokenType::kRParenthesis);
@@ -176,7 +179,7 @@ Parser::statement Parser::ParseIfStatement(bool flag, bool parsing_function_flag
         {TokenType::kEnd, TokenType::kElif, TokenType::kElse},
         parsing_function_flag
     );
-    statement statement_false = std::make_unique<EmptyStatement>();
+    statement statement_false = std::make_unique<ast::EmptyStmt>();
     while (Match(TokenType::kElif)) {
         statement_false = ParseIfStatement(false, parsing_function_flag);
     }
@@ -190,7 +193,7 @@ Parser::statement Parser::ParseIfStatement(bool flag, bool parsing_function_flag
         Check(TokenType::kEnd);
         Check(TokenType::kIf);
     }
-    return std::make_unique<IfStatement>(
+    return std::make_unique<ast::IfStmt>(
         std::move(if_expression), std::move(statement_true), std::move(statement_false)
     );
 }
@@ -200,26 +203,26 @@ Parser::statement Parser::ParseWhileStatement(bool parsing_function_flag) {
     statement while_statement = ParseScopeStatement({TokenType::kEnd}, parsing_function_flag);
     Check(TokenType::kEnd);
     Check(TokenType::kWhile);
-    return std::make_unique<WhileStatement>(
+    return std::make_unique<ast::WhileStmt>(
         std::move(while_expression), std::move(while_statement)
     );
 }
 
 Parser::statement Parser::ParseForStatement(bool parsing_function_flag) {
-    std::string name = Peek().Text();
+    std::string name = Peek().GetText();
     Check(TokenType::kIdentifier);
     Check(TokenType::kIn);
     auto expr = ParseExpression();
     auto scope = ParseScopeStatement({TokenType::kEnd}, parsing_function_flag);
     Check(TokenType::kEnd);
     Check(TokenType::kFor);
-    return std::make_unique<ForStatement>(name, std::move(expr), std::move(scope));
+    return std::make_unique<ast::ForStmt>(name, std::move(expr), std::move(scope));
 }
 
 Parser::statement Parser::ParseScopeStatement(const std::set<TokenType>& stop_words,
                                               bool parsing_function_flag) {
-    std::unique_ptr<ScopeStatement> scope = std::make_unique<ScopeStatement>();
-    while (!stop_words.contains(Peek().Type())) {
+    std::unique_ptr<ast::ScopeStmt> scope = std::make_unique<ast::ScopeStmt>();
+    while (!stop_words.contains(Peek().GetType())) {
         scope->add(ParseStatement(parsing_function_flag));
     }
     return scope;
@@ -227,15 +230,15 @@ Parser::statement Parser::ParseScopeStatement(const std::set<TokenType>& stop_wo
 
 Parser::statement Parser::ParseAssignStatement() {
     Token current = Peek();
-    if (reserved_names_for_functions.contains(current.Text())) {
+    if (reserved_names_for_functions.contains(current.GetText())) {
         throw std::runtime_error("It's forbidden to assign system function names");
     }
     for (auto& [token, assignment]: assignment_table_) {
-        if (Peek().Type() == TokenType::kIdentifier && Peek(1).Type() == token) {
+        if (Peek().GetType() == TokenType::kIdentifier && Peek(1).GetType() == token) {
             Check(TokenType::kIdentifier);
             Check(token);
-            return std::make_unique<AssignStatement>(
-                current.Text(), ParseExpression(), assignment
+            return std::make_unique<ast::AssignStmt>(
+                current.GetText(), ParseExpression(), assignment
             );
         }
     }
@@ -243,7 +246,7 @@ Parser::statement Parser::ParseAssignStatement() {
 }
 
 Parser::statement Parser::ParseReturnStatement() {
-    return std::make_unique<ReturnStatement>(ParseExpression());
+    return std::make_unique<ast::ReturnStmt>(ParseExpression());
 }
 
 Parser::expression Parser::ParseExpression() {
@@ -256,7 +259,7 @@ Parser::expression Parser::ParseBinaryOperations(expression (Parser::*next_level
         bool matched = false;
         for (const auto& [token, operation] : table) {
             if (Match(token)) {
-                expr = std::make_unique<BinaryExpressionAST>(
+                expr = std::make_unique<ast::BinExpr>(
                     operation, std::move(expr), (this->*next_level)()
                 );
                 matched = true;
@@ -294,13 +297,13 @@ Parser::expression Parser::ParseMult() {
 
 Parser::expression Parser::ParseUnaryPlusMinus() {
     if (Match(TokenType::kMinus)) {
-        return std::make_unique<UnaryExpressionAST>(
-            OperationType::kMinusOp, ParseLogicalNot()
+        return std::make_unique<ast::UnaryExpr>(
+            ast::OperationType::kMinusOp, ParseLogicalNot()
         );
     }
     if (Match(TokenType::kPlus)) {
-        return std::make_unique<UnaryExpressionAST>(
-            OperationType::kPlusOp, ParseLogicalNot()
+        return std::make_unique<ast::UnaryExpr>(
+            ast::OperationType::kPlusOp, ParseLogicalNot()
         );
     }
     return ParseLogicalNot();
@@ -308,8 +311,8 @@ Parser::expression Parser::ParseUnaryPlusMinus() {
 
 Parser::expression Parser::ParseLogicalNot() {
     if (Match(TokenType::kLogicalNot)) {
-        return std::make_unique<UnaryExpressionAST>(
-            OperationType::kLogicalNot, ParseSuffixExpression()
+        return std::make_unique<ast::UnaryExpr>(
+            ast::OperationType::kLogicalNot, ParseSuffixExpression()
         );
     }
     return ParseSuffixExpression();
@@ -324,7 +327,7 @@ Parser::expression Parser::ParseSuffixExpression() {
         } else if (Match(TokenType::kLBracket)) {
             auto index_expr = ParseExpression();
             Check(TokenType::kRBracket);
-            expr = std::make_unique<IndexExpression>(std::move(expr), std::move(index_expr));
+            expr = std::make_unique<ast::IndexExpr>(std::move(expr), std::move(index_expr));
         } else break;
     }
     return expr;
@@ -332,9 +335,9 @@ Parser::expression Parser::ParseSuffixExpression() {
 
 Parser::expression Parser::ParseLiteral() {
     auto token = Peek();
-    if (kIdentifierTable.contains(token.Type())) {
-        Check(token.Type());
-        return kIdentifierTable.at(token.Type())(token);
+    if (kIdentifierTable.contains(token.GetType())) {
+        Check(token.GetType());
+        return kIdentifierTable.at(token.GetType())(token);
     }
     if (Match(TokenType::kLParenthesis)) {
         auto expr = ParseExpression();
@@ -359,26 +362,26 @@ Parser::expression Parser::ParseArray() {
             break;
         }
     }
-    return std::make_unique<ArrayExpression>(std::move(exprs));
+    return std::make_unique<ast::ArrayExpr>(std::move(exprs));
 }
 
 Parser::expression Parser::ParseFunctionCall(expression function) {
     std::vector<expression> arguments;
-    while (Peek().Type() != TokenType::kRParenthesis) {
+    while (Peek().GetType() != TokenType::kRParenthesis) {
         arguments.push_back(ParseExpression());
         if (!Match(TokenType::kComma)) {
             break;
         }
     }
     Check(TokenType::kRParenthesis);
-    return std::make_unique<FunctionCallExpression>(std::move(function), std::move(arguments));
+    return std::make_unique<ast::FunctionCallExpr>(std::move(function), std::move(arguments));
 }
 
 Parser::expression Parser::ParseFunctionDeclaration() {
     Check(TokenType::kLParenthesis);
     std::vector<std::string> arguments;
-    while (Peek().Type() == TokenType::kIdentifier) {
-        arguments.push_back(Peek().Text());
+    while (Peek().GetType() == TokenType::kIdentifier) {
+        arguments.push_back(Peek().GetText());
         Check(TokenType::kIdentifier);
         if (!Match(TokenType::kComma)) {
             break;
@@ -388,7 +391,7 @@ Parser::expression Parser::ParseFunctionDeclaration() {
     statement body = ParseScopeStatement({TokenType::kEnd}, true);
     Check(TokenType::kEnd);
     Check(TokenType::kFunction);
-    return std::make_unique<ConstExpressionAST>(MakeFunctionValue(std::move(body), std::move(arguments)));
+    return std::make_unique<ast::CnstExpr>(value::MakeFunction(std::move(body), std::move(arguments)));
 }
 
 bool Parser::Match(TokenType type) const {
@@ -402,3 +405,6 @@ void Parser::Check(TokenType type) const {
 const Token& Parser::Peek(size_t additional) const {
     return tokens_->Peek(additional);
 }
+
+
+} // namespace itmo_script::parser

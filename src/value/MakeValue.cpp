@@ -1,43 +1,39 @@
-#include "src/value/headers/MakeValue.h"
-
-#include "headers/SystemFunction.h"
-#include "src/value/headers/StringValue.h"
-#include "src/value/headers/DoubleValue.h"
-#include "src/value/headers/BoolValue.h"
-#include "src/value/headers/FunctionValue.h"
-#include "src/value/headers/NullValue.h"
-#include "src/value/headers/ArrayValue.h"
+#include "MakeValue.h"
 
 
-ValuePtr MakeStringValue(const std::string& value) {
-    return std::make_shared<StringValue>(value);
+namespace itmo_script::value {
+    
+ValuePtr MakeString(const std::string& value) {
+    return std::make_shared<String>(value);
 }
 
-ValuePtr MakeDoubleValue(double num) {
-    return std::make_shared<DoubleValue>(num);
+ValuePtr MakeDouble(double num) {
+    return std::make_shared<Double>(num);
 }
 
-ValuePtr MakeBoolValue(bool value) {
-    return std::make_shared<BoolValue>(value);
+ValuePtr MakeBool(bool value) {
+    return std::make_shared<Bool>(value);
 }
 
-ValuePtr MakeFunctionValue(std::unique_ptr<StatementAST> function_body,
+ValuePtr MakeFunction(std::unique_ptr<ast::Statement> function_body,
                            std::vector<std::string> arguments) {
-    return std::make_shared<FunctionValue>(std::move(function_body), std::move(arguments));
+    return std::make_shared<Function>(std::move(function_body), std::move(arguments));
 }
 
-ValuePtr MakeSystemFunctionValue(std::function<ValuePtr(const std::vector<ValuePtr>&)> function) {
-    return std::make_shared<SystemFunctionValue>(std::move(function));
+ValuePtr MakeSystemFunction(std::function<ValuePtr(const std::vector<ValuePtr>&)> function) {
+    return std::make_shared<SystemFunction>(std::move(function));
 }
 
-ValuePtr MakeNullValue() {
-    return std::make_shared<NullValue>();
+ValuePtr MakeNull() {
+    return std::make_shared<Null>();
 }
 
-ValuePtr MakeArrayValue() {
-    return std::make_shared<ArrayValue>();
+ValuePtr MakeArray() {
+    return std::make_shared<Array>();
 }
 
-ValuePtr MakeArrayValue(std::vector<ValuePtr> values) {
-    return std::make_shared<ArrayValue>(std::move(values));
+ValuePtr MakeArray(std::vector<ValuePtr> values) {
+    return std::make_shared<Array>(std::move(values));
 }
+
+} // namespace itmo_script::value
