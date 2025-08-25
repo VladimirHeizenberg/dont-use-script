@@ -2,14 +2,19 @@
 
 #include <stdexcept>
 #include <functional>
+#include <tuple>
 
 #include "src/ast/ast.h"
+
 #include "src/value/Value.h"
 #include "src/value/MakeValue.h"
 
-// -------------------tables-----------------------
+#include "src/errors/ParserErrors.h"
+
 
 namespace itmo_script::parser {
+
+// -------------------tables-----------------------
 
 static const std::unordered_map<TokenType, std::function<Parser::expression(const Token&)>> kIdentifierTable = {
     {
@@ -151,25 +156,6 @@ Parser::statement Parser::ParseStatement(bool parsing_function_flag) {
         return ParseAssignStatement();
     }
     return std::make_unique<ast::ExprStmt>(ParseExpression());
-}
-
-
-Parser::statement Parser::ParsePrintStatement() {
-    Check(TokenType::kLParenthesis);
-    statement print = std::make_unique<ast::PrintStmt>(
-        ParseExpression()
-    );
-    Check(TokenType::kRParenthesis);
-    return print;
-}
-
-Parser::statement Parser::ParsePrintlnStatement() {
-    Check(TokenType::kLParenthesis);
-    statement println = std::make_unique<ast::PrintlnStmt>(
-        ParseExpression()
-    );
-    Check(TokenType::kRParenthesis);
-    return println;
 }
 
 Parser::statement Parser::ParseIfStatement(bool flag, bool parsing_function_flag) {

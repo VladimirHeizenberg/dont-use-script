@@ -290,6 +290,7 @@ public:
             })
         );
     }
+    
 private:
     VariablesTable& table_;
 };

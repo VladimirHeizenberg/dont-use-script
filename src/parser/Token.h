@@ -3,14 +3,9 @@
 #include <string>
 
 #include "TokenType.h"
-
+#include "Location.h"
 
 namespace itmo_script::parser {
-
-struct Location {
-    size_t line;
-    size_t column;
-};
 
 class Token {
 public:

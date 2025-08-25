@@ -29,8 +29,6 @@ public:
 
 private:
     statement ParseStatement(bool parsing_function_flag);
-    statement ParsePrintStatement();
-    statement ParsePrintlnStatement();
     statement ParseIfStatement(bool flag, bool parsing_function_flag);
     statement ParseWhileStatement(bool parsing_function_flag);
     statement ParseForStatement(bool parsing_function_flag);
