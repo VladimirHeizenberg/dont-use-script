@@ -15,6 +15,11 @@ jobs:
         run: |
           cmake -S . -B cmake-build-debug
       
+      - name: Check files
+        run: find src -name Statement.h
+        run: head -n 5 src/value/Value.h
+
+
       - name: Build tests target
         run: |
           cmake --build cmake-build-debug --target itmoscript_tests
