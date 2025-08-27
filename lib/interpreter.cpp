@@ -1,8 +1,8 @@
 #include "interpreter.h"
 
-#include "src/parser/Lexer.h"
-#include "src/parser/Parser.h"
-#include "src/executor/Executor.h"
+#include "parser/Lexer.h"
+#include "parser/Parser.h"
+#include "executor/Executor.h"
 
 bool interpret(std::istream& input, std::ostream& output) {
     itmo_script::parser::Lexer lexer(input);

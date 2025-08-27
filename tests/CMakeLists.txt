@@ -27,7 +27,7 @@ target_link_libraries(
   GTest::gtest_main
 )
 
-target_include_directories(itmoscript_tests PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(itmoscript_tests PUBLIC ${PROJECT_SOURCE_DIR})
 
 include(GoogleTest)
 
