@@ -16,8 +16,8 @@ jobs:
           cmake -S . -B cmake-build-debug
       
       - name: Check files
-        run: find src -name Statement.h
-        run: head -n 5 src/value/Value.h
+        run: ls -R src/ast/statement
+
 
 
       - name: Build tests target
