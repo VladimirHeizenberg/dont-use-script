@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "Expression.h"
-#include "src/value/MakeValue.h"
+#include "value/MakeValue.h"
 
 namespace itmo_script::ast {
 

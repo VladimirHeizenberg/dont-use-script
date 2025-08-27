@@ -5,4 +5,4 @@ add_library(
     Operation.cpp
 )
 
-target_include_directories(value PUBLIC ${PROJECT_SOURCE_DIR})
+target_include_directories(value PUBLIC ${PROJECT_SOURCE_DIR}/src)

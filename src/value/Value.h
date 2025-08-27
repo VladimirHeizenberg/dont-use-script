@@ -6,7 +6,7 @@
 #include <functional>
 #include <stdexcept>
 
-#include "src/ast/statement/Statement.h"
+#include "ast/statement/Statement.h"
 
 namespace itmo_script::executor {
 class Context;

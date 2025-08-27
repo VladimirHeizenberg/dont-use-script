@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "src/executor/Context.h"
+#include "executor/Context.h"
 
 namespace itmo_script::value {
     class Value;

@@ -3,8 +3,8 @@
 #include <stdexcept>
 
 #include "Expression.h"
-#include "src/value/Value.h"
-#include "src/executor/VariablesTable.h"
+#include "value/Value.h"
+#include "executor/VariablesTable.h"
 
 
 namespace itmo_script::ast {

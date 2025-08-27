@@ -20,5 +20,6 @@ jobs:
           cmake --build cmake-build-debug --target itmoscript_tests
 
       - name: Run tests
+        working-directory: .\cmake-build-debug
         run: |
           ctest

@@ -2,7 +2,7 @@
 
 #include "Expression.h"
 #include "OperationType.h"
-#include "src/value/Operation.h"
+#include "value/Operation.h"
 
 namespace itmo_script::ast {
 

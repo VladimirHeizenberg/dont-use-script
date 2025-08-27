@@ -5,8 +5,8 @@
 
 #include "Expression.h"
 #include "OperationType.h"
-#include "src/value/MakeValue.h"
-#include "src/value/Operation.h"
+#include "value/MakeValue.h"
+#include "value/Operation.h"
 
 
 

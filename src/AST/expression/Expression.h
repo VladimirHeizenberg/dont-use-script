@@ -1,7 +1,7 @@
 #pragma once
 
-#include "src/value/Value.h"
-#include "src/executor/Context.h"
+#include "value/Value.h"
+#include "executor/Context.h"
 
 namespace itmo_script::ast {
 

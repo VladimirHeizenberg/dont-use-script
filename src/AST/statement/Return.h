@@ -2,8 +2,8 @@
 
 
 #include "Statement.h"
-#include "src/ast/expression/Expression.h"
-#include "src/executor/Context.h"
+#include "ast/expression/Expression.h"
+#include "executor/Context.h"
 
 namespace itmo_script::ast {
 

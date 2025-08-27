@@ -7,8 +7,8 @@
 
 #include "MakeValue.h"
 
-#include "src/executor/VariablesTable.h"
-#include "src/ast/statement/Statement.h"
+#include "executor/VariablesTable.h"
+#include "ast/statement/Statement.h"
 
 namespace itmo_script::value {
 

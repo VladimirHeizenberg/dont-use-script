@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Statement.h"
-#include "src/ast/expression/Expression.h"
+#include "ast/expression/Expression.h"
 
-#include "src/value/MakeValue.h"
+#include "value/MakeValue.h"
 
 
 namespace itmo_script::ast {

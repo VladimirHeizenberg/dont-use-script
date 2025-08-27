@@ -4,8 +4,8 @@
 
 #include "VariablesTable.h"
 #include "Initializer.h"
-#include "src/executor/Context.h"
-#include "src/executor/StatementSource.h"
+#include "executor/Context.h"
+#include "executor/StatementSource.h"
 
 namespace itmo_script::executor {
 

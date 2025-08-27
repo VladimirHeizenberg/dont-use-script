@@ -5,8 +5,8 @@
 #include <sstream>
 
 #include "VariablesTable.h"
-#include "src/value/MakeValue.h"
-#include "src/value/Operation.h"
+#include "value/MakeValue.h"
+#include "value/Operation.h"
 
 
 namespace itmo_script::executor {

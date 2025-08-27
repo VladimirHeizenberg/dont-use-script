@@ -1,7 +1,7 @@
 #pragma once
 
 #include "InterpreterError.h"
-#include "src/parser/Location.h"
+#include "parser/Location.h"
 
 namespace itmo_script::errors {
 

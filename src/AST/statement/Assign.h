@@ -5,10 +5,10 @@
 
 #include "Statement.h"
 #include "AssignType.h"
-#include "src/ast/expression/Expression.h"
-#include "src/ast/expression/BinExpr.h"
-#include "src/ast/expression/LiteralExpr.h"
-#include "src/executor/Context.h"
+#include "ast/expression/Expression.h"
+#include "ast/expression/BinExpr.h"
+#include "ast/expression/LiteralExpr.h"
+#include "executor/Context.h"
 
 
 namespace itmo_script::ast {

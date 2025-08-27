@@ -4,12 +4,12 @@
 #include <functional>
 #include <tuple>
 
-#include "src/ast/ast.h"
+#include "ast/ast.h"
 
-#include "src/value/Value.h"
-#include "src/value/MakeValue.h"
+#include "value/Value.h"
+#include "value/MakeValue.h"
 
-#include "src/errors/ParserErrors.h"
+#include "errors/ParserErrors.h"
 
 
 namespace itmo_script::parser {

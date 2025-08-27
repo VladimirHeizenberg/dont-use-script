@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Expression.h"
-#include "src/value/Value.h"
+#include "value/Value.h"
 
 
 namespace itmo_script::ast {

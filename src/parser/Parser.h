@@ -4,10 +4,10 @@
 #include <vector>
 #include <set>
 
-#include "src/ast/expression/Expression.h"
-#include "src/ast/expression/OperationType.h"
-#include "src/ast/statement/Statement.h"
-#include "src/ast/statement/AssignType.h"
+#include "ast/expression/Expression.h"
+#include "ast/expression/OperationType.h"
+#include "ast/statement/Statement.h"
+#include "ast/statement/AssignType.h"
 #include "TokenType.h"
 #include "TokenSource.h"
 

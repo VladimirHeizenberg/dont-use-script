@@ -3,8 +3,8 @@
 #include <memory>
 #include <iostream>
 
-#include "src/ast/statement/Statement.h"
-#include "src/ast//expression/Expression.h"
+#include "ast/statement/Statement.h"
+#include "ast//expression/Expression.h"
 
 
 namespace itmo_script::ast {

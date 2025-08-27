@@ -7,4 +7,4 @@ add_library(
 
 target_link_libraries(parser PUBLIC value)
 
-target_include_directories(parser PUBLIC ${PROJECT_SOURCE_DIR})
+target_include_directories(parser PUBLIC ${PROJECT_SOURCE_DIR}/src)
