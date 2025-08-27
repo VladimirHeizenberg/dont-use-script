@@ -6,8 +6,12 @@ on:
 
 jobs:
 
-  build:
-    runs-on: ubuntu-latest
+  ci:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -16,16 +20,7 @@ jobs:
 
       - name: Build target
         run: cmake --build cmake-build-debug --target itmoscript_tests
-
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: List build dir
-        run: ls -la cmake-build-debug
-
+        
       - name: Run tests
         working-directory: cmake-build-debug
         run: ctest
