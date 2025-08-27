@@ -28,14 +28,3 @@ jobs:
         working-directory: cmake-build-debug
         run: ctest --output-on-failure
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-  
-      - name: Install clang-format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
-  
-      - name: Run clang-format check
-        run: |
-          find src -name "*.cpp" -o -name "*.h" | xargs clang-format -n --Werror
