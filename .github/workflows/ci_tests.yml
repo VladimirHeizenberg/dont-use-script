@@ -25,5 +25,5 @@ jobs:
 
       - name: Run tests
         working-directory: cmake-build-debug
-        run: ctest --output-on-failure
+        run: ctest
 
