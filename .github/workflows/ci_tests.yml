@@ -23,6 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List build dir
+        run: ls -la cmake-build-debug
+
       - name: Run tests
         working-directory: cmake-build-debug
         run: ctest
