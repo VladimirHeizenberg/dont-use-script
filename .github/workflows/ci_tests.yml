@@ -4,27 +4,38 @@ on:
   push:
     branches: [deadline_0]
 
-
 jobs:
+
   build:
     runs-on: ubuntu-latest
+    needs: lint
     steps:
       - uses: actions/checkout@v4
 
       - name: Create CMake cache
-        run: |
-          cmake -S . -B cmake-build-debug
-      
-      - name: Check files
-        run: ls -R src/ast/statement
+        run: cmake -S . -B cmake-build-debug
 
+      - name: Build target
+        run: cmake --build cmake-build-debug --target itmoscript_tests
 
-
-      - name: Build tests target
-        run: |
-          cmake --build cmake-build-debug --target itmoscript_tests
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Run tests
         working-directory: cmake-build-debug
+        run: ctest --output-on-failure
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+  
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+  
+      - name: Run clang-format check
         run: |
-          ctest
+          find src -name "*.cpp" -o -name "*.h" | xargs clang-format -n --Werror
