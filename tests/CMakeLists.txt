@@ -19,6 +19,7 @@ add_executable(
   loop_and_branch_test.cpp
   escape_string_test.cpp
   array_test.cpp
+  expressions/arithmetic_expressions_test.cpp
 )
 
 target_link_libraries(
