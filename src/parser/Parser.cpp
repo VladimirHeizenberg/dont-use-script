@@ -11,7 +11,6 @@
 
 #include "errors/ParserErrors.h"
 
-
 namespace itmo_script::parser {
 
 // -------------------tables-----------------------
@@ -284,15 +283,25 @@ Parser::expression Parser::ParseMult() {
 Parser::expression Parser::ParseUnaryPlusMinus() {
     if (Match(TokenType::kMinus)) {
         return std::make_unique<ast::UnaryExpr>(
-            ast::OperationType::kMinusOp, ParseLogicalNot()
+            ast::OperationType::kMinusOp, ParseUnaryPlusMinus()
         );
     }
     if (Match(TokenType::kPlus)) {
         return std::make_unique<ast::UnaryExpr>(
-            ast::OperationType::kPlusOp, ParseLogicalNot()
+            ast::OperationType::kPlusOp, ParseUnaryPlusMinus()
         );
     }
-    return ParseLogicalNot();
+    return ParsePower();
+}
+
+Parser::expression Parser::ParsePower() {
+    expression expr = ParseLogicalNot();
+    if (Match(TokenType::kPower)) {
+        expr = std::make_unique<ast::BinExpr>(
+                ast::OperationType::kPowerOp, std::move(expr), ParsePower()
+            );
+    }
+    return expr;
 }
 
 Parser::expression Parser::ParseLogicalNot() {

@@ -45,6 +45,7 @@ private:
     expression ParseRelation();
     expression ParseAdd();
     expression ParseMult();
+    expression ParsePower();
     expression ParseUnaryPlusMinus();
     expression ParseLogicalNot();
     expression ParseSuffixExpression();

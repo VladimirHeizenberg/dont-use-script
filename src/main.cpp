@@ -10,20 +10,12 @@
 int main(int argc, char** argv) {
     ArgumentParser::ArgParser cmd_parser("ITMOScript cmd parser");
     cmd_parser.AddStringArgument('i', "input", "Source code file");
-    cmd_parser.Parse(argc, argv);
+    if (!cmd_parser.Parse(argc, argv)) {
+        std::cout << cmd_parser.HelpDescription();
+        return 1;
+    }
 
-    std::string code = R"(
-        a = 1
-        b = 2
-        c = 123
-        d = (a + b *c) -c
-        println(a)
-        println(b)
-        println(c)
-        println(d)
-    )";
-
-    std::stringstream source_code(code);
+    std::fstream source_code(cmd_parser.GetValue<std::string>("input"));
     itmo_script::parser::Lexer lexer(source_code);
     try {
         auto result = lexer.Tokenize();

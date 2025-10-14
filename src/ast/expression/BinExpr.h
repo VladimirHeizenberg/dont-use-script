@@ -28,6 +28,7 @@ public:
             case OperationType::kMulOp: return value::Multiply(lhs, rhs);
             case OperationType::kDivOp: return value::Divide(lhs, rhs);
             case OperationType::kRemainderOp: return value::Remainder(lhs, rhs);
+            case OperationType::kPowerOp: return value::Power(lhs, rhs);
             case OperationType::kLogicalAnd: return value::LogicalAnd(lhs, rhs);
             case OperationType::kLogicalOr: return value::LogicalOr(lhs, rhs);
             case OperationType::kLess: return value::Less(lhs, rhs);
