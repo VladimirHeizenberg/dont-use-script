@@ -41,6 +41,7 @@ INSTANTIATE_TEST_SUITE_P(
         ExpressionCase{"2 ^ 3", "8"},
 
         // Priority
+        // comment
         ExpressionCase{"2 + 3 * 4", "14"},
         ExpressionCase{"(2 + 3) * 4", "20"},
         ExpressionCase{"2 * 3 ^ 2", "18"},
