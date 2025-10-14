@@ -1,0 +1,8 @@
+a = 1
+b = 2
+c = 123
+d = (a + b *c) -c
+println(a)
+println(b)
+println(c)
+println(d)
