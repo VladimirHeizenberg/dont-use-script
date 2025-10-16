@@ -1,9 +1,9 @@
 #include <sstream>
+#include <string>
 
 #include <gtest/gtest.h>
 
 #include <lib/interpreter.h>
-
 
 struct ExpressionCase {
     std::string code;
@@ -14,10 +14,10 @@ inline std::ostream& operator<<(std::ostream& out, const ExpressionCase& test_ca
     return out << test_case.code;
 }
 
-class ArithmeticExpressionsTestSuite : public ::testing::TestWithParam<ExpressionCase> {};
+class NumberArithmeticExpressionsTestSuite : public ::testing::TestWithParam<ExpressionCase> {};
 
 
-TEST_P(ArithmeticExpressionsTestSuite, EvaluateExpression) {
+TEST_P(NumberArithmeticExpressionsTestSuite, EvaluateExpression) {
     std::stringstream ss("print(" + GetParam().code + ")");
     std::stringstream out;
     EXPECT_TRUE(interpret(ss, out));
@@ -27,7 +27,7 @@ TEST_P(ArithmeticExpressionsTestSuite, EvaluateExpression) {
 
 INSTANTIATE_TEST_SUITE_P(
     ArithmeticExpressionTestCases,
-    ArithmeticExpressionsTestSuite,
+    NumberArithmeticExpressionsTestSuite,
     testing::Values(
         // Literals and base arithmetics
         ExpressionCase{"1", "1"},
