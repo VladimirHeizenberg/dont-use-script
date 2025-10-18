@@ -20,6 +20,8 @@ add_executable(
   escape_string_test.cpp
   array_test.cpp
   expressions/arithmetic_expressions_test.cpp
+  expressions/string_arithmetic_expressions_test.cpp
+  expressions/index_expressions_test.cpp
 )
 
 target_link_libraries(
