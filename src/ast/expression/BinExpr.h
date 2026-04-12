@@ -37,7 +37,7 @@ public:
             case OperationType::kGreaterOrEqual: return value::GreaterOrEqual(lhs, rhs);
             case OperationType::kEqual: return value::Equals(lhs, rhs);
             case OperationType::kNotEqual: return value::NotEquals(lhs, rhs);
-            // default: throw std::runtime_error("Unknown operation");
+            default: throw std::runtime_error("Unknown operation");
         }
     }
 

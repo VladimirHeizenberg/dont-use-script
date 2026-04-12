@@ -109,8 +109,8 @@ static const Parser::operators_table add_table_ = {
 
 static const Parser::operators_table mult_table_ = {
     {TokenType::kAsteriks,       ast::OperationType::kMulOp},
-    {TokenType::kSlash,       ast::OperationType::kDivOp},
-    {TokenType::kRemainder, ast::OperationType::kRemainderOp},
+    {TokenType::kSlash,          ast::OperationType::kDivOp},
+    {TokenType::kRemainder,      ast::OperationType::kRemainderOp},
 };
 
 static const Parser::operators_table power_table_ = {

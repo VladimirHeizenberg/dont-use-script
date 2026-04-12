@@ -22,6 +22,7 @@ add_executable(
   expressions/arithmetic_expressions_test.cpp
   expressions/string_arithmetic_expressions_test.cpp
   expressions/index_expressions_test.cpp
+  expressions/array_arithmetic_expression_test.cpp
 )
 
 target_link_libraries(
