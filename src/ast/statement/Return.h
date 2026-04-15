@@ -5,7 +5,7 @@
 #include "ast/expression/Expression.h"
 #include "executor/Context.h"
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class ReturnStmt: public Statement {
 public:
@@ -19,4 +19,4 @@ private:
     std::unique_ptr<Expression> return_expression;
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

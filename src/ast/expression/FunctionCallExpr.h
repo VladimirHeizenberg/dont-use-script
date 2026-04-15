@@ -3,7 +3,7 @@
 #include "Expression.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class FunctionCallExpr: public Expression {
 public:
@@ -28,4 +28,4 @@ private:
     std::vector<std::unique_ptr<Expression>> arguments_;
 };
 
-} // namespace itmo_script
+} // namespace dont_use_script

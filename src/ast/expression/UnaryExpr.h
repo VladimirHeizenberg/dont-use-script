@@ -10,7 +10,7 @@
 
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class UnaryExpr: public Expression {
 public:
@@ -48,4 +48,4 @@ private:
     std::unique_ptr<Expression> expr_;
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

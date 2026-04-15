@@ -11,7 +11,7 @@
 
 #include "errors/ParserErrors.h"
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 // -------------------tables-----------------------
 
@@ -402,4 +402,4 @@ const Token& Parser::Peek(size_t additional) const {
 }
 
 
-} // namespace itmo_script::parser
+} // namespace dont_use_script::parser

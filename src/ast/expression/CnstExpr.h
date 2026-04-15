@@ -4,7 +4,7 @@
 #include "value/Value.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class CnstExpr: public Expression {
 public:

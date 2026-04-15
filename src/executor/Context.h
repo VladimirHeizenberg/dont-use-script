@@ -3,7 +3,7 @@
 #include "VariablesTable.h"
 
 
-namespace itmo_script::executor {
+namespace dont_use_script::executor {
 
 class Context {
 public:
@@ -24,4 +24,4 @@ private:
     VariablesTable& table_;
 };
 
-} // namespace itmo_script::executor
+} // namespace dont_use_script::executor

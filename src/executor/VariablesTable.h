@@ -4,12 +4,12 @@
 #include <string>
 
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
     class Value;
     using ValuePtr = std::shared_ptr<Value>;
 }
 
-namespace itmo_script::executor {
+namespace dont_use_script::executor {
 
 class VariablesTable {
 public:

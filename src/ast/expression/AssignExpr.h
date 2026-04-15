@@ -3,11 +3,11 @@
 #include "Expression.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 // later
 class AssignExpr: public Expression {
 public:
     
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast
