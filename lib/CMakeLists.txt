@@ -13,10 +13,10 @@ target_include_directories(argparser INTERFACE
 )
 
 
-add_library(itmoscript interpreter.cpp)
+add_library(dont_use_script interpreter.cpp)
 
-target_include_directories(itmoscript PUBLIC ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(itmoscript
+target_include_directories(dont_use_script PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(dont_use_script
         PUBLIC parser
         value
 )

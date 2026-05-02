@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(
-    itmo-script
+    dont-use-script
     VERSION 1.0
-    DESCRIPTION "ITMOScript interpreter"
+    DESCRIPTION "DontUseScript interpreter"
     LANGUAGES CXX
 )
 

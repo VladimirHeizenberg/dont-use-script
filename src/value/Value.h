@@ -8,11 +8,11 @@
 
 #include "ast/statement/Statement.h"
 
-namespace itmo_script::executor {
+namespace dont_use_script::executor {
 class Context;
 }
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
 
 enum class ValueType {
     kArrayValue,
@@ -185,4 +185,4 @@ private:
     std::function<ValuePtr(const std::vector<ValuePtr>&)> function_;
 };
 
-} // namespace itmo_script::value
+} // namespace dont_use_script::value

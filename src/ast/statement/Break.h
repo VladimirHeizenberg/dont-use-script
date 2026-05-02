@@ -3,7 +3,7 @@
 #include "Statement.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class BreakStmt: public Statement {
 public:
@@ -12,4 +12,4 @@ public:
     }
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

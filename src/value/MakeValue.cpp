@@ -1,7 +1,7 @@
 #include "MakeValue.h"
 
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
     
 ValuePtr MakeString(const std::string& value) {
     return std::make_shared<String>(value);
@@ -36,4 +36,4 @@ ValuePtr MakeArray(std::vector<ValuePtr> values) {
     return std::make_shared<Array>(std::move(values));
 }
 
-} // namespace itmo_script::value
+} // namespace dont_use_script::value

@@ -3,7 +3,7 @@
 #include "Value.h"
 
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
 
 // Arithmetic operations
 ValuePtr Add(const ValuePtr& left, const ValuePtr& right);
@@ -24,4 +24,4 @@ ValuePtr LogicalAnd(const ValuePtr& left, const ValuePtr& right);
 ValuePtr LogicalOr(const ValuePtr& left, const ValuePtr& right);
 ValuePtr LogicalNot(const ValuePtr& left);
 
-} // namespace itmo_script::value
+} // namespace dont_use_script::value

@@ -12,7 +12,7 @@
 #include "TokenSource.h"
 
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 class Parser {
 public:
@@ -61,4 +61,4 @@ private:
     std::unique_ptr<TokenSource> tokens_;
 };
 
-} // namespace itmo_script::parser
+} // namespace dont_use_script::parser

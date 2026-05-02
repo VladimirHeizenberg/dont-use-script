@@ -8,7 +8,7 @@
 #include <ArgParser.h>
 
 int main(int argc, char** argv) {
-    ArgumentParser::ArgParser cmd_parser("ITMOScript cmd parser");
+    ArgumentParser::ArgParser cmd_parser("dont_use_script cmd parser");
     cmd_parser.AddStringArgument('i', "input", "Source code file");
     if (!cmd_parser.Parse(argc, argv)) {
         std::cout << cmd_parser.HelpDescription();
@@ -16,17 +16,17 @@ int main(int argc, char** argv) {
     }
 
     std::fstream source_code(cmd_parser.GetValue<std::string>("input"));
-    itmo_script::parser::Lexer lexer(source_code);
+    dont_use_script::parser::Lexer lexer(source_code);
     try {
         auto result = lexer.Tokenize();
-        std::unique_ptr<itmo_script::parser::TokenSource> tokens = 
-            std::make_unique<itmo_script::parser::VectorReferenceTokenSource>(result);
-        itmo_script::parser::Parser parser(std::move(tokens));
+        std::unique_ptr<dont_use_script::parser::TokenSource> tokens = 
+            std::make_unique<dont_use_script::parser::VectorReferenceTokenSource>(result);
+        dont_use_script::parser::Parser parser(std::move(tokens));
 
-        std::unique_ptr<itmo_script::executor::StatementSource> statement_source = std::make_unique<itmo_script::executor::VectorStatementSource>(
+        std::unique_ptr<dont_use_script::executor::StatementSource> statement_source = std::make_unique<dont_use_script::executor::VectorStatementSource>(
             parser.parse()
         );
-        itmo_script::executor::Executor executor(std::move(statement_source), std::cin, std::cout);
+        dont_use_script::executor::Executor executor(std::move(statement_source), std::cin, std::cout);
         executor.Execute();
     } catch (std::runtime_error& e) {
         std::cerr << e.what() << std::endl;

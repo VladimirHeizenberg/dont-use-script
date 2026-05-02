@@ -9,7 +9,7 @@
 #include "value/Operation.h"
 
 
-namespace itmo_script::executor {
+namespace dont_use_script::executor {
 
 class Initializer {
 public:
@@ -295,4 +295,4 @@ private:
     VariablesTable& table_;
 };
 
-} // namespace itmo_script::executor
+} // namespace dont_use_script::executor

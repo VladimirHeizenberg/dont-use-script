@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 enum TokenType {
     kIdentifier,
@@ -125,4 +125,4 @@ inline std::string token_to_string(TokenType token) {
     return "unknown";
 }
 
-} // namespace itmo_script::parser
+} // namespace dont_use_script::parser

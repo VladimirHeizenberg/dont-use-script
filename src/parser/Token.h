@@ -5,7 +5,7 @@
 #include "TokenType.h"
 #include "Location.h"
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 class Token {
 public:
@@ -32,4 +32,4 @@ private:
     Location location_;
 };
 
-} // namespace itmo_script::parser
+} // namespace dont_use_script::parser

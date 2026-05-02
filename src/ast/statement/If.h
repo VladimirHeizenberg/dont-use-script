@@ -4,7 +4,7 @@
 #include "ast/expression/Expression.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class IfStmt final: public Statement {
 public:
@@ -35,4 +35,4 @@ private:
     std::unique_ptr<Statement> statement_false_;
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

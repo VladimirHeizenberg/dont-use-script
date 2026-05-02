@@ -3,7 +3,7 @@
 #include "Statement.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class ContinueStmt: public Statement {
 public:

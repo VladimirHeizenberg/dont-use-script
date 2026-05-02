@@ -3,7 +3,7 @@
 #include "Statement.h"
 #include "ast/expression/Expression.h"
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class WhileStmt: public Statement {
 public:
@@ -30,4 +30,4 @@ private:
     std::unique_ptr<Statement> statement_;
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast
