@@ -13,7 +13,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-  dont-use-script_tests
+  dont_use_script_tests
   function_test.cpp
   types_test.cpp
   loop_and_branch_test.cpp
@@ -26,13 +26,13 @@ add_executable(
 )
 
 target_link_libraries(
-  dont-use-script_tests
+  dont_use_script_tests
   dont_use_script
   GTest::gtest_main
 )
 
-target_include_directories(dont-use-script_tests PUBLIC ${PROJECT_SOURCE_DIR})
+target_include_directories(dont_use_script_tests PUBLIC ${PROJECT_SOURCE_DIR})
 
 include(GoogleTest)
 
-gtest_discover_tests(dont-use-script_tests)
+gtest_discover_tests(dont_use_script_tests)

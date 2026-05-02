@@ -1,13 +1,15 @@
 # DontUseScript Interpreter
 
+![C++ Standard](https://img.shields.io/badge/C%2B%2B-20%2F23-blue.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![Tests](https://github.com/VladimirHeizenberg/dont-use-script/actions/workflows/ci-tests.yml/badge.svg)
+
 DontUseScript This is a custom scripting language designed with Python-like semantics (dynamic typing, garbage collection, first-class functions). This project implements the full execution pipeline: **Lexical Analysis**, **Parsing**, **Abstract Syntax Tree (AST)**, **Interpretation**.
 
 ## Key features
 
-* Memory Model: Uses a reference-counting mechanism (implemented by using `std::shared_ptr`) where primitives are copied by value and complex types (strings, lists, functions) by reference.
-* First-class functions: Functions can be assigned to variables, passed as arguments, and returned from other functions.* Dynamic arrays and strings
-* Control flow: `if-else-then`, `for`, `while` with support of `break` and `continue`.
-* Standart library: Built-in standart library for math and work with arrays and strings. Is a part of a language (interpreter, i.o.w. STD is implemented inside C++ code).
+* **Memory Model**: Uses a reference-counting mechanism (implemented by using `std::shared_ptr`) where primitives are copied by value and complex types (strings, lists, functions) by reference.
+* **First-class functions**: Functions can be assigned to variables, passed as arguments, and returned from other functions.* Dynamic arrays and strings
+* **Control flow**: `if-else-then`, `for`, `while` with support of `break` and `continue`.
+* **Standart library**: Built-in standart library for math and work with arrays and strings. Is a part of a language (interpreter, i.o.w. STD is implemented inside C++ code).
 
 ## Example code
 

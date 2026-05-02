@@ -1,8 +1,10 @@
-name: "CI tests"
+name: "Tests"
 
 on:
   push:
-    branches: [deadline_0]
+    branches: [main]
+  pull_requst:
+    branches: [main]
 
 jobs:
 
