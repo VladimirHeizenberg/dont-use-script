@@ -10,7 +10,7 @@
 #include "executor/VariablesTable.h"
 #include "ast/statement/Statement.h"
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
 
 /* bool value */
 
@@ -237,4 +237,4 @@ ValuePtr Function::AsFunctionCall(const std::vector<ValuePtr> &args_values, exec
     return MakeNull();
 }
 
-} // namespace itmo_script::value
+} // namespace dont_use_script::value

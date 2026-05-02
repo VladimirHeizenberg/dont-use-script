@@ -4,12 +4,12 @@
 
 #include "executor/Context.h"
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
     class Value;
     using ValuePtr = std::shared_ptr<Value>;
 }
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 enum class StatementResult {
     kNormal,
@@ -47,4 +47,4 @@ class EmptyStmt: public Statement {
     }
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

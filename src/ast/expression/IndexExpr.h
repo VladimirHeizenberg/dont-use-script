@@ -4,7 +4,7 @@
 #include "Expression.h"
 #include "value/MakeValue.h"
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class IndexExpr: public Expression {
 public:

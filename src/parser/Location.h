@@ -1,11 +1,11 @@
 #pragma once
 
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 struct Location {
     size_t line;
     size_t column;
 };
 
-} // namespace itmo_script::parser
+} // namespace dont_use_script::parser

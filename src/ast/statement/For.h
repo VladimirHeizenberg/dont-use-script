@@ -6,7 +6,7 @@
 #include "value/MakeValue.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class ForStmt: public Statement {
 public:

@@ -5,7 +5,7 @@
 #include "Value.h"
 #include "ast/statement/Statement.h"
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
 
 ValuePtr MakeString(const std::string& value);
 ValuePtr MakeDouble(double num);

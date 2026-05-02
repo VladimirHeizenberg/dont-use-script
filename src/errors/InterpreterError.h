@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace itmo_script::errors {
+namespace dont_use_script::errors {
 
 class InterpreterError: public std::runtime_error {
 public:

@@ -11,7 +11,7 @@
 
 #include "errors/ParserErrors.h"
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 // -------------------tables-----------------------
 
@@ -109,8 +109,8 @@ static const Parser::operators_table add_table_ = {
 
 static const Parser::operators_table mult_table_ = {
     {TokenType::kAsteriks,       ast::OperationType::kMulOp},
-    {TokenType::kSlash,       ast::OperationType::kDivOp},
-    {TokenType::kRemainder, ast::OperationType::kRemainderOp},
+    {TokenType::kSlash,          ast::OperationType::kDivOp},
+    {TokenType::kRemainder,      ast::OperationType::kRemainderOp},
 };
 
 static const Parser::operators_table power_table_ = {
@@ -402,4 +402,4 @@ const Token& Parser::Peek(size_t additional) const {
 }
 
 
-} // namespace itmo_script::parser
+} // namespace dont_use_script::parser

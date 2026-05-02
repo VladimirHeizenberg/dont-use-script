@@ -3,7 +3,7 @@
 #include "value/Value.h"
 #include "executor/Context.h"
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 enum class ExprType {
     kBinaryExpression,
@@ -21,4 +21,4 @@ public:
     virtual ~Expression() = default;
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

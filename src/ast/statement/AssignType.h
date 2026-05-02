@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 enum class AssignType {
     kAssign,
@@ -11,4 +11,4 @@ enum class AssignType {
     kDivAssign,
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

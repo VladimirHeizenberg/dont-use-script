@@ -3,7 +3,7 @@
 #include "InterpreterError.h"
 #include "parser/Location.h"
 
-namespace itmo_script::errors {
+namespace dont_use_script::errors {
 
 class SyntaxError: public InterpreterError {
 public:
@@ -18,4 +18,4 @@ public:
     : InterpreterError("UnexpectedToken: " + msg) {}
 };
 
-} // namespace itmo_script::errors
+} // namespace dont_use_script::errors

@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 bool TokenSource::Match(TokenType type) {
     if (Peek().GetType() == type) {

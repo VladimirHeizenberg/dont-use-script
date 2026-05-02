@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 enum class OperationType {
     kPlusOp,

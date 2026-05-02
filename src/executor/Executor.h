@@ -7,7 +7,7 @@
 #include "executor/Context.h"
 #include "executor/StatementSource.h"
 
-namespace itmo_script::executor {
+namespace dont_use_script::executor {
 
 class Executor {
 public:
@@ -68,4 +68,4 @@ private:
     Context context_;
 };
 
-} // namespace itmo_script::executor
+} // namespace dont_use_script::executor

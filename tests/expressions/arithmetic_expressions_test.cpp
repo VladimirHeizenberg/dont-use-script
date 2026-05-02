@@ -1,9 +1,9 @@
 #include <sstream>
+#include <string>
 
 #include <gtest/gtest.h>
 
 #include <lib/interpreter.h>
-
 
 struct ExpressionCase {
     std::string code;
@@ -14,10 +14,10 @@ inline std::ostream& operator<<(std::ostream& out, const ExpressionCase& test_ca
     return out << test_case.code;
 }
 
-class ArithmeticExpressionsTestSuite : public ::testing::TestWithParam<ExpressionCase> {};
+class NumberArithmeticExpressionsTestSuite : public ::testing::TestWithParam<ExpressionCase> {};
 
 
-TEST_P(ArithmeticExpressionsTestSuite, EvaluateExpression) {
+TEST_P(NumberArithmeticExpressionsTestSuite, EvaluateExpression) {
     std::stringstream ss("print(" + GetParam().code + ")");
     std::stringstream out;
     EXPECT_TRUE(interpret(ss, out));
@@ -27,7 +27,7 @@ TEST_P(ArithmeticExpressionsTestSuite, EvaluateExpression) {
 
 INSTANTIATE_TEST_SUITE_P(
     ArithmeticExpressionTestCases,
-    ArithmeticExpressionsTestSuite,
+    NumberArithmeticExpressionsTestSuite,
     testing::Values(
         // Literals and base arithmetics
         ExpressionCase{"1", "1"},
@@ -41,7 +41,6 @@ INSTANTIATE_TEST_SUITE_P(
         ExpressionCase{"2 ^ 3", "8"},
 
         // Priority
-        // comment
         ExpressionCase{"2 + 3 * 4", "14"},
         ExpressionCase{"(2 + 3) * 4", "20"},
         ExpressionCase{"2 * 3 ^ 2", "18"},
@@ -72,6 +71,7 @@ INSTANTIATE_TEST_SUITE_P(
         ExpressionCase{"- -3", "3"},
         ExpressionCase{"- - -3", "-3"},
         ExpressionCase{"-(-3)", "3"},
+        ExpressionCase{"+3", "3"},
 
         // Comparison
         ExpressionCase{"1 == 1", "true"},

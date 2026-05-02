@@ -7,7 +7,7 @@
 #include "executor/VariablesTable.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class LiteralExpr: public Expression {
 public:
@@ -28,4 +28,4 @@ private:
     std::string name_;
 }; 
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

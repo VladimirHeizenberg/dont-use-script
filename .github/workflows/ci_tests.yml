@@ -1,8 +1,10 @@
-name: "CI tests"
+name: "Tests"
 
 on:
   push:
-    branches: [deadline_0]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
 
@@ -19,7 +21,7 @@ jobs:
         run: cmake -S . -B cmake-build-debug
 
       - name: Build target
-        run: cmake --build cmake-build-debug --target itmoscript_tests
+        run: cmake --build cmake-build-debug --target dont_use_script_tests
         
       - name: Run tests
         working-directory: cmake-build-debug

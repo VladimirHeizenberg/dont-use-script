@@ -10,7 +10,7 @@
 #include "MakeValue.h"
 
 
-namespace itmo_script::value {
+namespace dont_use_script::value {
 
 using OperandsType = std::pair<ValueType, ValueType>;
 using FunctionT = std::function<ValuePtr(const ValuePtr&, const ValuePtr&)>;
@@ -290,4 +290,4 @@ ValuePtr LogicalNot(const ValuePtr& left) {
     return MakeBool(!left->AsBool());
 }
 
-} // namespace itmo_script::value
+} // namespace dont_use_script::value

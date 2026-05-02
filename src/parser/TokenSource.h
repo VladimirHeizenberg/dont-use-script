@@ -5,7 +5,7 @@
 #include "Token.h"
 
 
-namespace itmo_script::parser {
+namespace dont_use_script::parser {
 
 class TokenSource {
 public:

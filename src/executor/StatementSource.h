@@ -5,7 +5,7 @@
 
 #include "ast/statement/Statement.h"
 
-namespace itmo_script::executor {
+namespace dont_use_script::executor {
 
 class StatementSource {
 public:
@@ -32,4 +32,4 @@ private:
     int index_;
 };
 
-} // namespace itmo_script::executor
+} // namespace dont_use_script::executor

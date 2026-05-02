@@ -3,7 +3,7 @@
 #include "Statement.h"
 #include "ast/expression/Expression.h"
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class ExprStmt: public Statement {
 public:

@@ -13,23 +13,26 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-  itmoscript_tests
+  dont_use_script_tests
   function_test.cpp
   types_test.cpp
   loop_and_branch_test.cpp
   escape_string_test.cpp
   array_test.cpp
   expressions/arithmetic_expressions_test.cpp
+  expressions/string_arithmetic_expressions_test.cpp
+  expressions/index_expressions_test.cpp
+  expressions/array_arithmetic_expression_test.cpp
 )
 
 target_link_libraries(
-  itmoscript_tests
-  itmoscript
+  dont_use_script_tests
+  dont_use_script
   GTest::gtest_main
 )
 
-target_include_directories(itmoscript_tests PUBLIC ${PROJECT_SOURCE_DIR})
+target_include_directories(dont_use_script_tests PUBLIC ${PROJECT_SOURCE_DIR})
 
 include(GoogleTest)
 
-gtest_discover_tests(itmoscript_tests)
+gtest_discover_tests(dont_use_script_tests)

@@ -11,7 +11,7 @@
 #include "executor/Context.h"
 
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 
 class AssignStmt: public Statement {
@@ -47,4 +47,4 @@ private:
     };
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

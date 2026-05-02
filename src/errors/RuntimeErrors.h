@@ -3,7 +3,7 @@
 #include "InterpreterError.h"
 
 
-namespace itmo_script::errors {
+namespace dont_use_script::errors {
 
 class RuntimeError: public InterpreterError {
 public:
@@ -33,4 +33,4 @@ public:
 };
 
 
-} // namespace itmo_script::errors
+} // namespace dont_use_script::errors

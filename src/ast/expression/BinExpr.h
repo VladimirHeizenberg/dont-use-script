@@ -4,7 +4,7 @@
 #include "OperationType.h"
 #include "value/Operation.h"
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class BinExpr: public Expression {
 public:
@@ -37,7 +37,7 @@ public:
             case OperationType::kGreaterOrEqual: return value::GreaterOrEqual(lhs, rhs);
             case OperationType::kEqual: return value::Equals(lhs, rhs);
             case OperationType::kNotEqual: return value::NotEquals(lhs, rhs);
-            // default: throw std::runtime_error("Unknown operation");
+            default: throw std::runtime_error("Unknown operation");
         }
     }
 
@@ -47,4 +47,4 @@ private:
     std::unique_ptr<Expression> rhs_;
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast

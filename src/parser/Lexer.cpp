@@ -1,7 +1,7 @@
 #include "Lexer.h"
 
 
-namespace isp = itmo_script::parser;
+namespace isp = dont_use_script::parser;
 
 isp::Lexer::Lexer(std::istream& stream)
     : code_source_(stream)

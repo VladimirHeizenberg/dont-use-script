@@ -3,7 +3,7 @@
 #include "Expression.h"
 #include "value/MakeValue.h"
 
-namespace itmo_script::ast {
+namespace dont_use_script::ast {
 
 class ArrayExpr: public Expression {
 public:
@@ -26,4 +26,4 @@ private:
     std::vector<std::unique_ptr<Expression>> elements_;
 };
 
-} // namespace itmo_script::ast
+} // namespace dont_use_script::ast
